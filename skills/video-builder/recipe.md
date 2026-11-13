@@ -8,16 +8,16 @@ Você segue a receita: escolhe uma pauta pronta (ou preenche a ficha de um forma
 |---|---|
 | `vid pauta`, `vid new --pauta`, `vid new --format --ficha` | reordenar, inserir, remover ou trocar o tipo de cena |
 | `vid scene <slug> set <id> narration="…"`, `sub=…`, `hold=…`, `params.<campo>=…` | mudar o mundo (`world`), escrever cena em dados, escrever código |
-| `vid check`, `voice`, `sheet`, `render`, `pack`, `batch` | editar `src/`, `formats/`, `skills/` |
+| `vid check`, `voice`, `sheet`, `render`, `pack`, `batch` | editar `src/`, o `playbook/` da marca, `skills/` |
 
 O validador acusa ERRO se você sair disso.
 
 ## Caminho 1: pauta pronta (o normal)
 
-1. `node scripts/vid.mjs pauta`. Escolha a marcada com `→`, a menos que o usuário peça outra.
-2. `node scripts/vid.mjs new epNN-tema --pauta <id> --model haiku`.
-3. `node scripts/vid.mjs check epNN-tema --script`. Sem ERRO, siga.
-4. Leia as falas (`src/episodes/epNN-tema/script.json`, campo `narration` de cada cena) e mostre ao usuário, com a legenda do post (`post.caption`).
+1. `node scripts/vid.mjs --workspace <pasta> pauta`. Escolha a marcada com `→`, a menos que o usuário peça outra.
+2. `node scripts/vid.mjs --workspace <pasta> new epNN-tema --pauta <id> --model haiku`.
+3. `node scripts/vid.mjs --workspace <pasta> check epNN-tema --script`. Sem ERRO, siga.
+4. Leia as falas (`<pasta>/episodes/epNN-tema/script.json`, campo `narration` de cada cena) e mostre ao usuário, com a legenda do post (`post.caption`).
 5. Depois do sim: `vid voice`, `vid check`, `vid sheet`, **olhe as folhas** (`revisao.md`), `vid render`, `vid pack`.
 
 Pronto. A pauta tem ficha completa e inglês conferido: você não escreve nada. (Nos quizzes, as opções erradas são erradas de propósito; não as "corrija".)
@@ -29,7 +29,7 @@ Pronto. A pauta tem ficha completa e inglês conferido: você não escreve nada.
    * `diz-vs-ouve`: a frase errada soa como outra coisa para quem ouve (35 s).
    * `mito-vs-fato`: uma crença comum desmentida (35 s).
    * `mini-aula-quiz`: pergunta, três opções, resposta, treino (35 s).
-2. Copie `formats/examples/<formato>.json` para `ficha.json` (na pasta `videos`) e troque **todos** os valores pelos do tema.
+2. Copie `<pasta>/playbook/examples/<formato>.json` para `ficha.json` (fora do git) e troque **todos** os valores pelos do tema.
 3. `vid new epNN-tema "Título" --format <formato> --ficha ficha.json --place <lugar> --model haiku`.
 
 Lugares: `cafe`, `restaurante`, `hotel`, `imigracao`, `aeroporto`, `loja`, `farmacia`.
@@ -50,10 +50,10 @@ Lugares: `cafe`, `restaurante`, `hotel`, `imigracao`, `aeroporto`, `loja`, `farm
 ## Ajustar sem refazer
 
 ```bash
-node scripts/vid.mjs scene epNN-tema set trava narration="E você… *congela*."
-node scripts/vid.mjs scene epNN-tema set fora params.loss="0 casacos"
-node scripts/vid.mjs voice epNN-tema      # só as falas mudadas gastam voz
-node scripts/vid.mjs render epNN-tema     # só as cenas mudadas são renderizadas
+node scripts/vid.mjs --workspace <pasta> scene epNN-tema set trava narration="E você… *congela*."
+node scripts/vid.mjs --workspace <pasta> scene epNN-tema set fora params.loss="0 casacos"
+node scripts/vid.mjs --workspace <pasta> voice epNN-tema      # só as falas mudadas gastam voz
+node scripts/vid.mjs --workspace <pasta> render epNN-tema     # só as cenas mudadas são renderizadas
 ```
 
 `params.<campo>` troca um parâmetro da cena. Os campos de cada tipo de cena estão em `beats.md`.

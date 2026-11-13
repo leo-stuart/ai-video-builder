@@ -6,6 +6,7 @@ set -euo pipefail
 here="$(cd "$(dirname "$0")/.." && pwd)"
 dest="${1:-$HOME}/.claude/skills"
 mkdir -p "$dest"
+# remove o atalho antigo (nome anterior da skill, pragma-video) se ficou quebrado
 for link in "$dest"/pragma-video*; do
   [ -L "$link" ] && [ ! -e "$link" ] && rm "$link" && echo "removido atalho quebrado: ${link##*/}"
 done

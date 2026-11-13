@@ -49,7 +49,7 @@ Legenda: ✅ feito · 🔨 em andamento · ⬜ falta · 💤 depois do MVP
 * ✅ Aprovar voz, renderizar, baixar pacote
 
 ### Etapa 6 — Fechamento
-* ⬜ README e guia de início em 5 minutos
+* ✅ README e guia de início em 5 minutos (comandos verificados no espaço de exemplo)
 * ✅ Um comando sobe tudo (`pnpm start`)
 
 ## Fora do MVP

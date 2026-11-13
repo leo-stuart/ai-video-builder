@@ -35,18 +35,18 @@ src/         motor Remotion (kit, engine). Desenha um episódio a partir de dado
 
 ```json
 {
-  "brand": { "name": "Pragma", "tagline": "Pare de estudar inglês. **Comece a falar.**", "cta": "Link na bio",
+  "brand": { "name": "Vidforge", "tagline": "Do roteiro ao vídeo. **Sem editar nada.**", "cta": "Link na bio",
              "logo": "img/logo-mark.png", "productShots": ["img/08-speak.jpg"] },
   "voices": { "narrator": "<id>", "voce": "<id>", "atendente": "<id>", "tutor": "<id>" },
   "freedom": "auto",
   "models": { "haiku": "recipe", "sonnet": "guided", "opus": "free", "fable": "free" },
   "variety": { "window": 6, "maxShared": 2 },
   "rules": { "requireBrandMention": true, "foreignMarkup": "en", "requireBeats": ["tutor-line"] },
-  "post": { "slots": ["08:00", "12:30", "18:00", "21:00", "23:00"], "hashtags": ["ingles", "pragma"] }
+  "post": { "slots": ["08:00", "12:30", "18:00", "21:00", "23:00"], "hashtags": ["videocurto", "vidforge"] }
 }
 ```
 
-`rules` liga e desliga verificações que hoje estão fixas para o Pragma (mencionar a marca, inglês fora de `[en]`, exigir cena do tutor).
+`rules` liga e desliga verificações que eram fixas para o Pragma (mencionar a marca, inglês fora de `[en]`, exigir cena do tutor); agora vêm do espaço de trabalho.
 
 ## Uma composição genérica
 

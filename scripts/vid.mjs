@@ -42,7 +42,7 @@ const HELP = `vid [--workspace <pasta>] <comando>
   render <slug> [--force]       render por segmentos, com cache
   pack <slug>                   pacote de postagem por plataforma
   batch <slug> [<slug> …]       voz + check + render + pacote de cada episódio (ou lote.json)
-  docs                          gera skills/pragma-video/beats.md e formats.md
+  docs                          gera skills/video-builder/beats.md e formats.md
   forget <slug>                 tira o episódio do histórico de variedade
 
 O espaço de trabalho vem de --workspace, de VB_WORKSPACE ou de ./workspaces/default.
@@ -196,10 +196,10 @@ async function main() {
 
     case "docs": {
       const d = await core.generateDocs(ws);
-      const out = join(root, "skills/pragma-video");
+      const out = join(root, "skills/video-builder");
       writeFileSync(join(out, "beats.md"), d.beats);
       writeFileSync(join(out, "formats.md"), d.formats);
-      console.log("gerado: skills/pragma-video/beats.md e formats.md");
+      console.log("gerado: skills/video-builder/beats.md e formats.md");
       break;
     }
 

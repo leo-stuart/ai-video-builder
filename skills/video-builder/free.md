@@ -1,12 +1,14 @@
 # Nível `free`
 
+> **Fora do MVP.** O validador recusa cenas `custom:`. Este guia descreve o caminho previsto; hoje use `recipe` ou `guided` (cena em dados).
+
 Tudo do nível `guided` (leia `guided.md` primeiro) mais uma coisa: **escrever uma cena nova em código (TSX)**, só para este episódio. Use quando nenhuma cena de `beats.md` nem uma cena em dados (`vid scene … scene`) consegue fazer o que a ideia pede (uma perseguição, uma animação de objeto que não existe).
 
 Antes de escrever código, tente `guided`: cena em dados cobre quase tudo.
 
 ## Como criar uma cena em código
 
-1. Crie `src/episodes/<slug>/custom/<nome>.tsx` com um componente React **sem props** como `export default`. Use as peças do kit (referência abaixo) e o mesmo padrão das cenas do `ep03` (`src/episodes/ep03-for-here-or-to-go/index.tsx`, que é só código de exemplo).
+1. Crie `<pasta>/episodes/<slug>/custom/<nome>.tsx` (caminho previsto) com um componente React **sem props** como `export default`. Use as peças do kit (referência abaixo) e o mesmo padrão das cenas do `ep03` (`src/legacy/ep03-for-here-or-to-go/index.tsx`, que é só código de exemplo).
 2. Na cena do `episode.json`, ponha `"type": "custom:<nome>"` (por exemplo `vid scene <slug> replace <id> --type custom:perseguicao`).
 3. `vid check <slug>`, `vid sheet <slug> --scene <id>`, olhe, `vid render <slug>`.
 

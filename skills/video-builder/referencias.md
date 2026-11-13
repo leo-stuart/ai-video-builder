@@ -55,4 +55,4 @@ Concorrente direto: app de inglês com tutor de IA por voz. Cerca de 60 anúncio
 
 O que levamos: o vídeo começa dentro da conversa; o erro e a correção na hora são a demonstração do produto; o personagem fala com a câmera; o pitch fica no fim e é curto.
 
-O que não levamos: os roteiros, as frases de efeito, o nome de método, prêmios e números deles. Nosso pitch só cita o que o Pragma faz.
+O que não levamos: os roteiros, as frases de efeito, o nome de método, prêmios e números deles. Nosso pitch só cita o que a marca faz.

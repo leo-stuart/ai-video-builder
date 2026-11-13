@@ -7,13 +7,13 @@ Peça `--freedom guided` ou `--model sonnet` no `vid new`. O validador impõe o 
 ## Comandos
 
 ```bash
-node scripts/vid.mjs scene <slug> set <id> narration="…" sub="…" hold=0.5 params.campo=valor
-node scripts/vid.mjs scene <slug> replace <id> --type <tipo> --narration "…" --set params.campo=valor
-node scripts/vid.mjs scene <slug> insert <id-da-cena-anterior> --id nova --type <tipo> --narration "…" [--speaker voce|atendente|tutor] [--sub "…"] [--hold 0.4] --set params.campo=valor
-node scripts/vid.mjs scene <slug> move <id> --after <outro-id>
-node scripts/vid.mjs scene <slug> remove <id>
-node scripts/vid.mjs scene <slug> world place=hotel metaphor=bars camStyle=slide studioTone=noite
-node scripts/vid.mjs scene <slug> scene <id> --json '{…cena em dados…}'      (ou --json @cena.json)
+node scripts/vid.mjs --workspace <pasta> scene <slug> set <id> narration="…" sub="…" hold=0.5 params.campo=valor
+node scripts/vid.mjs --workspace <pasta> scene <slug> replace <id> --type <tipo> --narration "…" --set params.campo=valor
+node scripts/vid.mjs --workspace <pasta> scene <slug> insert <id-da-cena-anterior> --id nova --type <tipo> --narration "…" [--speaker voce|atendente|tutor] [--sub "…"] [--hold 0.4] --set params.campo=valor
+node scripts/vid.mjs --workspace <pasta> scene <slug> move <id> --after <outro-id>
+node scripts/vid.mjs --workspace <pasta> scene <slug> remove <id>
+node scripts/vid.mjs --workspace <pasta> scene <slug> world place=hotel metaphor=bars camStyle=slide studioTone=noite
+node scripts/vid.mjs --workspace <pasta> scene <slug> scene <id> --json '{…cena em dados…}'      (ou --json @cena.json)
 ```
 
 * Os **tipos de cena** e os campos de cada um estão em `beats.md`. Os **formatos** (que sequências já funcionam) estão em `formats.md`.
@@ -30,7 +30,7 @@ Dá para pegar cenas de formatos diferentes. Por exemplo, trocar o fecho de um `
 * Cada cena precisa dos seus parâmetros obrigatórios (`beats.md`).
 * `app-enter` vem antes de qualquer `tutor-line`, `user-error` ou `user-success`: elas se passam em casa, com o tutor.
 * Não ponha duas cenas de estúdio seguidas com o mesmo cartão: o episódio fica parado.
-* Mantenha as falas fixas da série: o fecho `Pragma. Link na bio.` e a menção ao Pragma.
+* Mantenha as falas fixas da série: o fecho e a menção à marca (as que estão no `workspace.json`).
 
 ## Cena em dados (`scene`)
 

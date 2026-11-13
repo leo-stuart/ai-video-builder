@@ -1,52 +1,119 @@
-# Vídeos curtos do Pragma
+# ai-video-builder
 
-Builder de vídeos animados em 3D para Reels, TikTok e YouTube Shorts, gerados por código com [Remotion](https://www.remotion.dev). Cada vídeo ensina uma frase de inglês em 25 a 50 segundos e termina chamando para o app.
+Builder local de vídeos curtos animados em 3D (Reels, TikTok, YouTube Shorts), feito com [Remotion](https://www.remotion.dev) e three.js, para qualquer marca. Você escreve a pauta, gera a voz e renderiza o vídeo e o pacote de postagem, tudo na sua máquina.
 
-Um vídeo é um `episode.json`: um **formato** (sequência de cenas), uma **ficha** (as frases) e um **mundo** sorteado (lugar, elenco, câmera, metáfora) que muda a cada episódio.
+## Comece em 5 minutos
+
+Precisa de Node 22+, pnpm e `ffmpeg`.
 
 ```bash
-pnpm install                                                  # uma vez
-node scripts/vid.mjs pauta                                    # pautas prontas (→ = recomendada)
-node scripts/vid.mjs new ep14-tema --pauta <id> --model sonnet   # cria o episódio
-node scripts/vid.mjs check ep14-tema --script                 # confere o roteiro
-node scripts/vid.mjs voice ep14-tema                          # voz (ElevenLabs) e tempos
-node scripts/vid.mjs check ep14-tema                          # confere tudo
-node scripts/vid.mjs sheet ep14-tema                          # folhas de revisão em .qa/
-node scripts/vid.mjs render ep14-tema                         # render por cena, com cache
-node scripts/vid.mjs pack ep14-tema                           # pacote: out/ep14-tema/ + out/calendar.csv
-node scripts/vid.mjs batch ep14-a ep15-b ep16-c               # lote: voz + validação + render + pacote
-pnpm studio                                                   # pré-visualização ao vivo
+pnpm install
+VB_WORKSPACE=workspaces/demo pnpm start
 ```
 
-Outros comandos: `vid formats`, `vid scene` (editar uma cena sem abrir arquivo), `vid docs`, `vid forget`. `node scripts/vid.mjs` sem argumentos mostra a ajuda. Precisa de Node 20+ e `ffmpeg`.
+Abra http://127.0.0.1:4173. O espaço `workspaces/demo` (marca fictícia "Vidforge") já vem com um episódio.
+
+Mesmo fluxo pela CLI, sem voz paga (`--provider none` gera só os tempos, para rascunho):
+
+```bash
+node scripts/vid.mjs --workspace workspaces/demo pauta
+node scripts/vid.mjs --workspace workspaces/demo new ep02-meu-primeiro --pauta precisa-saber-editar --model haiku
+node scripts/vid.mjs --workspace workspaces/demo check ep02-meu-primeiro --script
+node scripts/vid.mjs --workspace workspaces/demo voice ep02-meu-primeiro --provider none
+node scripts/vid.mjs --workspace workspaces/demo sheet ep02-meu-primeiro
+```
+
+`pauta` lista as pautas prontas (a marcada com → é a recomendada). `sheet` grava as folhas de revisão em `workspaces/demo/.qa/`: abra e olhe antes de seguir.
+
+Episódios criados no demo aparecem no `git status` (pasta nova em `workspaces/demo/episodes/`). Para testar sem sujar o repositório, crie um espaço próprio (veja [Espaço de trabalho](#espaço-de-trabalho)).
+
+## Três jeitos de usar
+
+* **UI web**: `pnpm start` (com `VB_WORKSPACE` apontando para o espaço). Lista de episódios, editor de cenas, prévia ao vivo, aprovar voz, renderizar e baixar o pacote. Endereço: http://127.0.0.1:4173.
+* **Agente (MCP)**: `pnpm mcp` sobe o servidor MCP por stdio. Para registrar no Claude Code ou no Claude Desktop, veja [`mcp/README.md`](mcp/README.md).
+* **CLI**: `node scripts/vid.mjs` (ou `pnpm vid`). Sem argumentos, mostra a ajuda:
+
+```
+init       cria um espaço de trabalho mínimo
+new        cria um episódio (--pauta id, ou "Título" --format X --ficha ficha.json)
+formats    lista os formatos e os campos da ficha
+pauta      pautas prontas ainda não usadas
+check      valida o episódio (--script confere só o roteiro)
+voice      gera a voz e os tempos (--provider none: sem voz paga)
+voices     vozes do ElevenLabs e saldo
+sheet      folhas de revisão
+scene      edita uma cena sem abrir arquivo
+render     render por segmentos, com cache
+pack       pacote de postagem por plataforma
+batch      voz, validação, render e pacote de vários episódios
+docs       gera beats.md e formats.md da skill
+forget     tira o episódio do histórico de variedade
+```
+
+Todo comando aceita `--workspace <pasta>`, ou use a variável `VB_WORKSPACE`.
+
+Agentes que usam a CLI leem `skills/video-builder/SKILL.md`. Para o Claude Code encontrá-la: `bash scripts/install-skills.sh`.
+
+## Espaço de trabalho
+
+Todo conteúdo fica num espaço de trabalho, uma pasta fora do motor:
+
+```
+<pasta>/
+  workspace.json     marca, vozes, regras, horários
+  playbook/          formatos (*.json), examples/, pautas/, variants.json, places.json
+  episodes/<slug>/   episode.json, script.json e timing.json (os dois últimos são gerados)
+  public/            img/ (logo, telas do produto), audio/ (gerado)
+  out/               vídeos, pacotes por plataforma e calendar.csv
+  .env.local         chave de voz (ELEVENLABS_API_KEY)
+  ledger.json        histórico de variedade
+  .cache/, .qa/      gerados
+```
+
+Escolha o espaço com `--workspace <pasta>` ou `VB_WORKSPACE=<pasta>`. Sem nenhum dos dois, o builder procura `workspaces/default`.
+
+Para criar o seu:
+
+```bash
+node scripts/vid.mjs init workspaces/minha-marca --name "Minha Marca"
+```
+
+Depois ponha formatos em `playbook/`, a logo em `public/img/` e edite `workspace.json`. Os espaços `workspaces/*` são privados e ficam fora do git; só `workspaces/demo` é público.
+
+O builder nasceu para os vídeos de um app de inglês. Hoje a marca é um dado do espaço de trabalho.
 
 ## Níveis de liberdade
 
-O Claude escolhe o nível pelo modelo (`builder.config.json`), e você pode forçar com `--freedom`:
+O nível vem do modelo que cria o episódio (`--model`, mapeado no bloco `models` do `workspace.json`). `--freedom` força outro.
 
 | Nível | Modelo | O que pode |
 |---|---|---|
 | `recipe` | Haiku | pauta pronta ou ficha; ajustar textos |
 | `guided` | Sonnet | reordenar, trocar, inserir e remover cenas; escrever cenas em dados |
-| `free` | Opus, Fable | também escrever cenas novas em código, só para o episódio |
+| `free` | Opus, Fable | cenas novas em código. **Fora do MVP:** o validador recusa cenas `custom:` |
 
 O validador (`vid check`) impõe o nível.
 
-## Onde está cada coisa
-
-* `skills/pragma-video/`: o passo a passo completo para um agente de IA. Comece por `SKILL.md`. Para o Claude Code enxergar a skill, rode `bash scripts/install-skills.sh` uma vez (instala em `~/.claude/skills`; passe um caminho para instalar só em um projeto).
-* `formats/`: os formatos (`*.json`), as fichas de exemplo (`examples/`), as pautas prontas com inglês conferido (`pautas/`) e as falas fixas variáveis (`variants.json`).
-* `src/engine/`: o motor (lê o JSON e desenha) e os tipos de cena (`beats/`). `src/kit/`: cenários, bonecos, legenda e animações.
-* `src/episodes/<slug>/`: `episode.json`, `script.json` (gerado), `timing.json` (gerado). `ep01` a `ep04` são episódios antigos, em código; o `catalogo` mostra todos os cenários e câmeras.
-* `ledger.json`: histórico de variedade; o validador impede episódios parecidos demais com os últimos.
-* `out/<slug>/`: pacote de postagem (`video.mp4`, `reels.txt`, `tiktok.txt`, `shorts.txt`, `thumb.jpg`, `meta.json`). `out/calendar.csv`: ordem e horário sugerido. **Nada é publicado: postar é com você.**
-* `voice/<slug>/<id>.m4a`: narração gravada por uma pessoa, uma por cena, que substitui a voz sintética.
-
 ## Voz
 
-Os áudios gerados (`public/audio/`) não vão para o git. Depois de clonar, rode `node scripts/vid.mjs voice <slug>` para regerar a voz de um episódio (gasta crédito do ElevenLabs, exceto falas em cache).
+* Provedor: ElevenLabs. Ponha `ELEVENLABS_API_KEY=...` em `<espaço>/.env.local` (modelo em `env.example`). A chave nunca vai para o git.
+* As vozes dos personagens ficam no `workspace.json`, em `voices`.
+* Falas iguais em episódios diferentes ficam em cache e não gastam crédito. `vid voices` mostra o saldo.
+* O plano grátis do ElevenLabs não cobre uso comercial.
+* `--provider none` gera só os tempos, sem chamar a API: use para rascunhar. `voice` sem essa flag gasta crédito.
+* Gravação humana opcional: `voice/<slug>/<id>.m4a`, uma por cena, substitui a voz sintética.
 
-Ponha `ELEVENLABS_API_KEY=...` em `.env.local` (fora do git; veja `env.example`). As vozes dos personagens ficam em `builder.config.json`. Falas iguais em episódios diferentes ficam em cache e não gastam crédito. `--provider none` gera só os tempos, para rascunhar. O plano grátis do ElevenLabs não cobre uso comercial.
+## Desenvolvimento
+
+```bash
+pnpm typecheck                  # tsc --noEmit
+node scripts/golden.mjs check   # quadros de referência
+node mcp/smoke.mjs              # teste do servidor MCP
+```
+
+`golden.mjs` e `smoke.mjs` usam `workspaces/pragma`, que é privado e não vai para o git. Por isso não rodam num clone limpo.
+
+Desenho e contrato: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md). O que está feito e o que falta: [`ROADMAP.md`](ROADMAP.md).
 
 ## Licenças
 

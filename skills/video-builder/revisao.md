@@ -1,6 +1,6 @@
 # Revisão
 
-`node scripts/vid.mjs sheet <slug>` gera folhas em `.qa/<slug>-sheet-N.jpg`: até 12 quadros por folha, dois por cena (um no começo, um perto do fim), cada um com o id da cena e o segundo no canto. **Abra todas as folhas com a ferramenta de ler imagem e olhe.** Você não vê o vídeo de outro jeito.
+`node scripts/vid.mjs --workspace <pasta> sheet <slug>` gera folhas em `.qa/<slug>-sheet-N.jpg`: até 12 quadros por folha, dois por cena (um no começo, um perto do fim), cada um com o id da cena e o segundo no canto. **Abra todas as folhas com a ferramenta de ler imagem e olhe.** Você não vê o vídeo de outro jeito.
 
 Para olhar uma cena de perto: `vid sheet <slug> --scene <id>` (seis quadros, maiores). Use sempre que consertar uma cena, em vez de refazer a folha inteira.
 
@@ -19,7 +19,7 @@ Para cada par de quadros, responda sim ou não:
 7. **A legenda está legível?** Não coberta por cartão, não em cima de outro texto.
 8. **Cartão, carimbo e rótulo estão inteiros dentro do quadro** e não cobrem o rosto de quem fala.
 9. **O X aparece quando alguém erra e o certo quando acerta.**
-10. **A última cena é a tela azul com o logo, "Pragma" e "Link na bio".**
+10. **A última cena é a tela azul com o logo, o nome da marca e "Link na bio".**
 
 No conjunto:
 
