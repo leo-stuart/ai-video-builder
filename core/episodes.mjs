@@ -278,6 +278,8 @@ export const deleteEpisode = async (ws, slug) => {
   rmSync(join(p.public, "audio", slug), { recursive: true, force: true });
   rmSync(join(p.out, slug), { recursive: true, force: true });
   for (const ext of ["mp4", "txt"]) rmSync(join(p.out, `${slug}.${ext}`), { force: true });
+  const qa = join(ws, ".qa");
+  if (existsSync(qa)) for (const f of readdirSync(qa)) if (f.startsWith(`${slug}-`)) rmSync(join(qa, f), { recursive: true, force: true });
   await forget(ws, slug);
   return { ok: true };
 };
