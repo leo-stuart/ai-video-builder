@@ -26,7 +26,7 @@ Legenda: ✅ feito · 🔨 em andamento · ⬜ falta · 💤 depois do MVP
 ### Etapa 2 — Núcleo
 * ✅ `core/`: lógica dos scripts como funções que devolvem dados
 * ✅ CLI reescrita como cliente fino do core
-* 🔨 Progresso de tarefas longas: o core já emite `onProgress`; a fila fica no servidor da UI
+* ✅ Progresso de tarefas longas: o core emite `onProgress`; UI e MCP enfileiram uma tarefa pesada por vez
 
 ### Etapa 3 — Geral, não só Pragma
 * ✅ Espaço de trabalho separado do motor (`workspace.json`, `playbook/`, `episodes/`)
@@ -36,21 +36,21 @@ Legenda: ✅ feito · 🔨 em andamento · ⬜ falta · 💤 depois do MVP
 * ✅ `workspaces/demo`: marca de exemplo pública (fictícia, "Vidforge"), com 1 formato genérico e 3 pautas; criada por Haiku
 
 ### Etapa 4 — MCP
-* ⬜ Servidor MCP (stdio) com uma ferramenta por função do core
-* ⬜ Folhas de revisão devolvidas como imagem; voz só com confirmação
-* ⬜ Instruções do servidor a partir da skill
-* ⬜ Teste de ponta a ponta com um agente usando só o MCP
+* ✅ Servidor MCP (stdio) com uma ferramenta por função do core
+* ✅ Folhas de revisão devolvidas como imagem; voz só com confirmação
+* ✅ Instruções do servidor a partir da skill
+* ⬜ Teste de ponta a ponta com um agente real usando só o MCP (falta registrar o servidor no Claude Code ou Desktop; o teste automático `mcp/smoke.mjs` passa)
 
 ### Etapa 5 — UI
-* ⬜ Servidor local + app web
-* ⬜ Lista de episódios e quadro de pautas
-* ⬜ Editor: cenas, falas, parâmetros, alertas do validador
-* ⬜ Prévia ao vivo (Remotion Player)
-* ⬜ Aprovar voz, renderizar, baixar pacote
+* ✅ Servidor local + app web
+* ✅ Lista de episódios e quadro de pautas
+* ✅ Editor: cenas, falas, parâmetros, alertas do validador
+* ✅ Prévia ao vivo (Remotion Player)
+* ✅ Aprovar voz, renderizar, baixar pacote
 
 ### Etapa 6 — Fechamento
 * ⬜ README e guia de início em 5 minutos
-* ⬜ Um comando sobe tudo (`pnpm start`)
+* ✅ Um comando sobe tudo (`pnpm start`)
 
 ## Fora do MVP
 
