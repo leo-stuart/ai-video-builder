@@ -10,7 +10,7 @@ type Issue = { scene?: string; message: string };
 type Val = { errors: Issue[]; warnings: Issue[]; ok: boolean };
 const STALE = /mudou depois da voz|sem voz\/tempo|sem áudio/;
 /** As mensagens do núcleo citam comandos de terminal; aqui a ação é um botão. */
-const human = (m: string) => m.replace(/\s*(Antes do render final )?[Rr]ode:? `?(node scripts\/)?vid[^.]*\.?`?/g, "").replace(/\s+$/, "") + (STALE.test(m) ? " Use o passo Voz." : "");
+const human = (m: string) => m.replace(/: vid scene \S+ world [^.]*\./, " na aba Mundo.").replace(/\s*(Antes do render final )?[Rr]ode:? `?(node scripts\/)?vid[^.]*\.?`?/g, "").replace(/\s+$/, "") + (STALE.test(m) ? " Use o passo Voz." : "");
 const KIND: Record<string, string> = { voice: "Gerando voz", frames: "Gerando folhas de revisão", render: "Renderizando", pack: "Montando pacote" };
 const WORLD: Record<string, { label: string; opts: string[] }> = {
   place: { label: "Lugar", opts: ["cafe", "restaurante", "hotel", "imigracao", "aeroporto", "loja", "farmacia"] },
