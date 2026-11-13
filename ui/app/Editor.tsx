@@ -5,6 +5,7 @@ import { FPS, H, W, sceneFrames } from "../../src/kit";
 import { api, type Job } from "./api";
 import { Dialog, Rich, STATUS, fmtT, plain, who } from "./lib";
 import { useJob } from "./useJob";
+import { Chat } from "./Chat";
 
 type Issue = { scene?: string; message: string };
 type Val = { errors: Issue[]; warnings: Issue[]; ok: boolean };
@@ -26,7 +27,7 @@ export const Editor: React.FC<{ slug: string; onBack: () => void }> = ({ slug, o
   const [sel, setSel] = useState<string | null>(null);
   const [frame, setFrame] = useState(0);
   const [playing, setPlaying] = useState(false);
-  const [tab, setTab] = useState<"cena" | "mundo" | "problemas">("cena");
+  const [tab, setTab] = useState<"cena" | "mundo" | "problemas" | "chat">("cena");
   const [modal, setModal] = useState<null | "voice" | "sheets" | "video" | "pack">(null);
   const [sheets, setSheets] = useState<string[]>([]);
   const [dirty, setDirty] = useState(false);
@@ -113,6 +114,18 @@ export const Editor: React.FC<{ slug: string; onBack: () => void }> = ({ slug, o
     [scenes],
   );
   const toggle = () => player.current?.toggle();
+
+  // O chat editou o episódio: recarrega e deixa a prévia na cena afetada (quando o id existe depois do reload).
+  const [focusScene, setFocusScene] = useState<string | null>(null);
+  const onChatChanged = useCallback((scene: string | null) => {
+    load().then((e) => setFocusScene(scene && e?.spec.beats.some((b: any) => b.id === scene) ? scene : null));
+  }, [load]);
+  useEffect(() => {
+    if (focusScene && scenes.some((s) => s.id === focusScene)) {
+      go(focusScene);
+      setFocusScene(null);
+    }
+  }, [focusScene, scenes, go]);
 
   useEffect(() => {
     const k = (e: KeyboardEvent) => {
@@ -269,7 +282,9 @@ export const Editor: React.FC<{ slug: string; onBack: () => void }> = ({ slug, o
               {val.errors.length > 0 && <span className="ct" style={{ ["--c" as any]: "var(--bad)" }}>{val.errors.length}</span>}
               {val.warnings.length > 0 && <span className="ct" style={{ ["--c" as any]: "var(--warn)" }}>{val.warnings.length}</span>}
             </button>
+            <button className={`tab${tab === "chat" ? " on" : ""}`} onClick={() => setTab("chat")}>Chat</button>
           </div>
+          <Chat slug={slug} active={tab === "chat"} onChanged={onChatChanged} />
           {tab === "cena" && beat && <SceneForm key={beat.id} slug={slug} beat={beat} onSaved={load} onDirty={setDirty} saveRef={saveRef} />}
           {tab === "mundo" && <World slug={slug} spec={ep.spec} onSaved={load} />}
           {tab === "problemas" && (

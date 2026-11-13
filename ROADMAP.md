@@ -48,6 +48,9 @@ Legenda: ✅ feito · 🔨 em andamento · ⬜ falta · 💤 depois do MVP
 * ✅ Prévia ao vivo (Remotion Player)
 * ✅ Aprovar voz, renderizar, baixar pacote
 
+* ✅ Chat com o Claude no editor: edita cenas e mundo do episódio aberto, vê folhas de revisão; modelo e esforço escolhidos na UI (testado só contra um servidor falso)
+* ⬜ Chat contra a API real (falta `ANTHROPIC_API_KEY` no `.env.local` do espaço de trabalho)
+
 ### Etapa 6 — Fechamento
 * ✅ README e guia de início em 5 minutos (comandos verificados no espaço de exemplo)
 * ✅ Um comando sobe tudo (`pnpm start`)
@@ -59,7 +62,6 @@ Legenda: ✅ feito · 🔨 em andamento · ⬜ falta · 💤 depois do MVP
 * 💤 Cenários fora do balcão; finais alternativos
 * 💤 Cores e fontes por marca; segundo estilo visual (2D)
 * 💤 Cenas em código pelo MCP/UI (nível `free`)
-* 💤 Chat com agente dentro da UI
 * 💤 Cadastro de marca por entrevista
 * 💤 Versão hospedada (login, render em nuvem, cobrança; exige rever licença do Remotion)
 

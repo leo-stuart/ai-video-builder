@@ -7,9 +7,11 @@ import { createReadStream, existsSync, readdirSync, realpathSync, statSync } fro
 import { randomUUID } from "node:crypto";
 import { basename, dirname, extname, join, sep } from "node:path";
 import { fileURLToPath } from "node:url";
+import Anthropic from "@anthropic-ai/sdk";
 import react from "@vitejs/plugin-react";
 import { createServer as createVite } from "vite";
 import * as core from "../core/index.mjs";
+import { EFFORTS, MODELS, clearHistory, removeHistory, displayHistory, getChatConfig, hasChatKey, noKeyError, runChat, setChatConfig } from "./chat.mjs";
 
 const UI = dirname(fileURLToPath(import.meta.url));
 const ENGINE = join(UI, "..");
@@ -115,13 +117,15 @@ const publicTop = () => new Set([P.enginePublic, P.public].flatMap((d) => (exist
 /* ───────────── tarefas longas ───────────── */
 const jobs = new Map();
 const busy = { episode: new Map(), bundle: null }; // uma por episódio; as que montam o bundle (folhas, render) uma por vez no processo
+const chatting = new Set(); // slugs com um turno de chat em andamento (um chat por vez por episódio; não roda junto com tarefa do mesmo episódio)
 
 const publicJob = (j) => ({ id: j.id, kind: j.kind, slug: j.slug, status: j.status, progress: j.progress, result: j.result, error: j.error, startedAt: j.startedAt, endedAt: j.endedAt });
 
 const startJob = (kind, slug, run, { usesBundle = false } = {}) => {
   const current = busy.episode.get(slug);
   if (current) throw new core.VbError("busy", `já existe uma tarefa em andamento neste episódio (${jobs.get(current).kind}). Espere terminar.`, { jobId: current });
-  if (usesBundle && busy.bundle) throw new core.VbError("busy", `outra tarefa de imagem/vídeo está em andamento (${jobs.get(busy.bundle).kind} de ${jobs.get(busy.bundle).slug}). Espere terminar.`, { jobId: busy.bundle });
+  if (chatting.has(slug)) throw new core.VbError("busy", "o chat está editando este episódio agora. Espere a resposta terminar.");
+  if (usesBundle && busy.bundle) throw new core.VbError("busy", `outra tarefa de imagem/vídeo está em andamento (${jobs.get(busy.bundle)?.kind ?? "chat"} de ${jobs.get(busy.bundle)?.slug ?? busy.bundle.replace("chat:", "")}). Espere terminar.`, { jobId: busy.bundle });
   const job = { id: randomUUID().slice(0, 8), kind, slug, status: "running", progress: { step: "start", done: 0, total: 0, label: "começando" }, result: null, error: null, startedAt: Date.now() };
   jobs.set(job.id, job);
   busy.episode.set(slug, job.id);
@@ -147,6 +151,44 @@ const startJob = (kind, slug, run, { usesBundle = false } = {}) => {
 
 const lastJobOf = (slug) => [...jobs.values()].filter((j) => j.slug === slug).sort((a, b) => b.startedAt - a.startedAt)[0];
 
+/* ───────────── chat (SSE) ───────────── */
+const chat = async (req, res, slug, body) => {
+  const message = typeof body.message === "string" ? body.message.trim() : "";
+  if (!message) throw new core.VbError("empty", "mensagem vazia.");
+  if (message.length > 20000) throw new core.VbError("too-big", "mensagem grande demais.");
+  if (!hasChatKey(WS)) throw noKeyError();
+  await core.getEpisode(WS, slug); // erro claro se o episódio não existe
+  if (chatting.has(slug)) throw new core.VbError("busy", "o chat já está respondendo neste episódio.");
+  if (busy.episode.has(slug)) throw new core.VbError("busy", `há uma tarefa em andamento neste episódio (${jobs.get(busy.episode.get(slug))?.kind}). Espere terminar.`);
+  chatting.add(slug);
+  res.writeHead(200, { "content-type": "text/event-stream; charset=utf-8", "cache-control": "no-store", connection: "keep-alive", "x-accel-buffering": "no" });
+  const emit = (event, data) => {
+    if (!res.writableEnded && !res.destroyed) res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
+  };
+  // Folhas de revisão montam o bundle: uma tarefa de imagem/vídeo por vez no processo, como nas tarefas da UI.
+  const serial = async (fn) => {
+    if (busy.bundle) throw new core.VbError("busy", `outra tarefa de imagem/vídeo está em andamento (${jobs.get(busy.bundle)?.kind ?? "chat"}). Tente de novo quando terminar.`);
+    const mine = `chat:${slug}`;
+    busy.bundle = mine;
+    try {
+      return await fn();
+    } finally {
+      if (busy.bundle === mine) busy.bundle = null;
+    }
+  };
+  // Se a aba fechar no meio, o turno termina no servidor (as edições já feitas ficam e o histórico é gravado).
+  try {
+    await runChat({ ws: WS, slug, message, emit, serial });
+  } catch (e) {
+    const msg = e?.name === "VbError" ? e.message : e instanceof Anthropic.APIError ? `API da Anthropic (${e.status ?? "?"}): ${e.message}` : (e?.message ?? String(e));
+    if (!(e?.name === "VbError")) console.error("[chat]", e);
+    emit("error", { code: e?.code ?? "error", message: msg });
+  } finally {
+    chatting.delete(slug);
+    res.end();
+  }
+};
+
 /* ───────────── rotas da API ───────────── */
 const outFiles = (slug) => {
   const dir = join(P.out, slug);
@@ -168,6 +210,15 @@ const api = async (req, res, url) => {
   const q = url.searchParams;
   const [a, b, c] = parts;
 
+  if (a === "workspace" && b === "chat") {
+    const info = () => ({ ...getChatConfig(WS), models: MODELS.map(({ id, label, price }) => ({ id, label, price })), efforts: EFFORTS, hasKey: hasChatKey(WS) });
+    if (m === "GET") return send(res, 200, info());
+    if (m === "PATCH" || m === "PUT" || m === "POST") {
+      const cur = getChatConfig(WS);
+      setChatConfig(WS, { model: body.model ?? cur.model, effort: body.effort ?? cur.effort });
+      return send(res, 200, info());
+    }
+  }
   if (a === "workspace" && m === "GET") {
     const cfg = await core.getWorkspace(WS);
     return send(res, 200, { path: WS, brand: cfg.brand, freedom: cfg.freedom, models: cfg.models, rules: cfg.rules });
@@ -208,9 +259,20 @@ const api = async (req, res, url) => {
           return send(res, 200, { ...ep, brand: props.brand, files: { video: existsSync(join(P.out, `${slug}.mp4`)), pack: outFiles(slug) }, job: job && job.status === "running" ? publicJob(job) : null });
         }
         if (m === "DELETE") {
-          if (busy.episode.has(slug)) throw new core.VbError("busy", "há uma tarefa em andamento neste episódio.");
-          return send(res, 200, await core.deleteEpisode(WS, slug));
+          if (busy.episode.has(slug) || chatting.has(slug)) throw new core.VbError("busy", "há uma tarefa ou uma conversa em andamento neste episódio.");
+          const r = await core.deleteEpisode(WS, slug);
+          removeHistory(WS, slug);
+          return send(res, 200, r);
         }
+      }
+      if (c === "chat") {
+        if (m === "GET") return send(res, 200, { ...displayHistory(WS, slug), busy: chatting.has(slug) });
+        if (m === "DELETE") {
+          if (chatting.has(slug)) throw new core.VbError("busy", "o chat está respondendo; espere terminar para limpar.");
+          clearHistory(WS, slug);
+          return send(res, 200, { ok: true });
+        }
+        if (m === "POST") return chat(req, res, slug, body);
       }
       if (c === "scene" && (m === "POST" || m === "PATCH")) return send(res, 200, await core.editScene(WS, slug, body.op ?? body));
       if (c === "validate" && m === "GET") return send(res, 200, await core.validate(WS, slug, { scriptOnly: q.get("scriptOnly") === "1" }));

@@ -13,6 +13,7 @@
     "start": "node ui/server.mjs"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^1.8.0",
     "@modelcontextprotocol/sdk": "^1.32.2",
     "@react-three/fiber": "8.17.10",
     "@remotion/bundler": "4.0.543",
