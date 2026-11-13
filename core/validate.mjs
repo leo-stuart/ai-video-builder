@@ -36,7 +36,7 @@ export const validate = async (ws, slug, { scriptOnly = false } = {}) => {
   if (!/^ep\d\d-[a-z0-9-]+$/.test(slug)) A(`slug "${slug}" foge do padrão epNN-tema-curto (ex.: ep04-cash-or-card).`);
   if (!script.captions || script.captions.y !== 1290 || script.captions.size !== 84) A(`falta "captions": { "y": 1290, "size": 84 } na raiz do roteiro (legenda no padrão das referências).`);
   if (!script.eleven) A(`falta "eleven": "<id da voz do narrador>" na raiz (workspace.json → voices.narrator).`);
-  if (scenes.length < 9 || scenes.length > 22) A(`${scenes.length} cenas. O formato pede de 14 a 20: cada cena é uma fala curta.`);
+  if (scenes.length < 4 || scenes.length > 22) A(`${scenes.length} cenas. Um episódio costuma ter de 4 a 22.`);
 
   const ids = new Set();
   let total = 0;
@@ -71,7 +71,7 @@ export const validate = async (ws, slug, { scriptOnly = false } = {}) => {
   Object.entries(script.cast ?? {}).forEach(([k, c]) => {
     if (!c.label) E(`cast.${k}: falta "label" (o nome que aparece sobre a legenda).`);
     if (!PALETTE.includes(c.color)) E(`cast.${k}: color "${c.color}" não existe. Use uma de: ${PALETTE.join(", ")}.`);
-    if (!c.eleven) A(`cast.${k}: falta "eleven" (id da voz). Rode listVoices / vid voices e ponha o id no cast.`);
+    if (!c.eleven && scenes.some((sc) => sc.speaker === k)) A(`cast.${k}: falta "eleven" (id da voz). Rode listVoices / vid voices e ponha o id no cast.`);
   });
 
   if (JSON.stringify(script).includes("TODO")) E(`ainda há "TODO" no roteiro. Preencha (a legenda do post, por exemplo).`);

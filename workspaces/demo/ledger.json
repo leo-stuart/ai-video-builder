@@ -1,0 +1,15 @@
+[
+  {
+    "slug": "ep01-demo",
+    "format": "mito-vs-fato",
+    "place": "cafe",
+    "metaphor": "pile",
+    "camStyle": "push",
+    "shirt": "#FF7A59",
+    "studioTone": "menta",
+    "sig": {
+      "fim": 0
+    },
+    "pauta": "rosto-na-camera"
+  }
+]

@@ -1,0 +1,48 @@
+{
+  "slug": "ep01-demo",
+  "series": "Inglês sem travar",
+  "number": 1,
+  "title": "Mito: precisa aparecer na câmera",
+  "eleven": "TX3LPaxmHKxFdv7VOQHJ",
+  "captions": {
+    "y": 1290,
+    "size": 84
+  },
+  "post": {
+    "caption": "Mito: Vídeo curto precisa de rosto?\nFato: Não. Texto e narração também prendem.\n\nCriar vídeo curto não exige o que parece. Quer ver como funciona? Link na bio.",
+    "hashtags": [
+      "criacaodeconteudo",
+      "videocurto",
+      "reels",
+      "marketingdigital",
+      "pequenosnegocios",
+      "conteudoparacriadores"
+    ],
+    "shortsTitle": "Mito ou fato: Não. Texto e narração também prendem."
+  },
+  "cast": {},
+  "scenes": [
+    {
+      "id": "mito",
+      "narration": "Mito: vídeo curto *precisa* de rosto na tela."
+    },
+    {
+      "id": "fato",
+      "narration": "Fato: texto e narração também *prendem* a atenção."
+    },
+    {
+      "id": "comparar",
+      "narration": "Quem se esconde da câmera desiste. O certo é: mostrar o produto e a ideia."
+    },
+    {
+      "id": "virada",
+      "narration": "Chega de adiar: conheça o *Vidforge*, que transforma seu roteiro em vídeo animado."
+    },
+    {
+      "id": "fim",
+      "narration": "Vidforge. Link na bio.",
+      "hold": 1.6,
+      "captions": false
+    }
+  ]
+}

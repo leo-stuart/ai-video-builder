@@ -1,0 +1,44 @@
+[
+  {
+    "id": "rosto-na-camera",
+    "place": "cafe",
+    "title": "Mito: precisa aparecer na câmera",
+    "ficha": {
+      "myth": "Mito: vídeo curto *precisa* de rosto na tela.",
+      "mythCard": "Vídeo curto precisa de rosto?",
+      "fact": "Fato: texto e narração também *prendem* a atenção.",
+      "factCard": "Não. Texto e narração também prendem.",
+      "compareSay": "Quem se esconde da câmera desiste. O certo é: mostrar o produto e a ideia.",
+      "wrong": "Aparecer na câmera sempre",
+      "right": "Mostrar produto e ideia"
+    }
+  },
+  {
+    "id": "precisa-saber-editar",
+    "place": "loja",
+    "title": "Mito: precisa saber editar",
+    "ficha": {
+      "myth": "Mito: você *precisa* saber editar para fazer um vídeo.",
+      "mythCard": "Precisa saber editar?",
+      "fact": "Fato: o roteiro pode virar o vídeo *sem* edição manual.",
+      "factCard": "Não. O roteiro vira o vídeo.",
+      "compareSay": "Quem monta cada corte na mão desiste na segunda semana. O certo é: escrever o roteiro e deixar a ferramenta montar.",
+      "wrong": "Montar cada corte na mão",
+      "right": "Escrever o roteiro"
+    }
+  },
+  {
+    "id": "so-quando-perfeito",
+    "place": "hotel",
+    "title": "Mito: só posta quando estiver perfeito",
+    "ficha": {
+      "myth": "Mito: você *só* deve postar quando o vídeo estiver perfeito.",
+      "mythCard": "Só posta quando estiver perfeito?",
+      "fact": "Fato: o que mais ajuda é *postar* e ajustar com o tempo.",
+      "factCard": "Postar e ajustar com o tempo.",
+      "compareSay": "Quem espera o vídeo perfeito fica de fora. O certo é: publicar e melhorar no próximo.",
+      "wrong": "Esperar o vídeo perfeito",
+      "right": "Publicar e melhorar"
+    }
+  }
+]

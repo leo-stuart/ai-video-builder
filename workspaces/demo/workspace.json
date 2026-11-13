@@ -1,0 +1,19 @@
+{
+  "brand": {
+    "name": "Vidforge",
+    "tagline": "Do roteiro ao vídeo. **Sem editar nada.**",
+    "cta": "Link na bio",
+    "productShots": []
+  },
+  "voices": {
+    "narrator": "TX3LPaxmHKxFdv7VOQHJ"
+  },
+  "freedom": "auto",
+  "models": { "haiku": "recipe", "sonnet": "guided", "opus": "free", "fable": "free", "mythos": "free" },
+  "variety": { "window": 6, "maxShared": 2 },
+  "rules": { "requireBrandMention": true },
+  "post": {
+    "slots": ["08:00", "12:30", "18:00", "21:00", "23:00"],
+    "hashtags": ["criacaodeconteudo", "videocurto", "reels", "marketingdigital", "pequenosnegocios", "conteudoparacriadores"]
+  }
+}

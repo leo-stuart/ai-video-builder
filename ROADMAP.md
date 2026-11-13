@@ -33,7 +33,7 @@ Legenda: ✅ feito · 🔨 em andamento · ⬜ falta · 💤 depois do MVP
 * ✅ Pragma migrado para `workspaces/pragma` (fora do git público)
 * ✅ Composição única `Episode` que recebe o JSON (habilita prévia ao vivo)
 * ✅ Marca vinda de dados: tela final, pitch, menção obrigatória, regras do validador
-* ⬜ `workspaces/demo`: marca de exemplo pública (o próprio builder), com 1 formato genérico e 3 pautas
+* ✅ `workspaces/demo`: marca de exemplo pública (fictícia, "Vidforge"), com 1 formato genérico e 3 pautas; criada por Haiku
 
 ### Etapa 4 — MCP
 * ⬜ Servidor MCP (stdio) com uma ferramenta por função do core

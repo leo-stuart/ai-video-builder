@@ -216,6 +216,7 @@ export const createEpisode = async (ws, { slug, title, pauta, format, ficha = {}
       atendente: { label: attendant, color: "coral", eleven: cfg.voices.atendente, say: { en: "Samantha" } },
       tutor: { label: "Tutor de IA", color: "indigo", eleven: cfg.voices.tutor, say: { en: "Daniel" } },
     },
+    // (o elenco é reduzido logo abaixo a quem realmente fala neste episódio)
     world: {
       place: fp.place,
       look: {
@@ -228,6 +229,8 @@ export const createEpisode = async (ws, { slug, title, pauta, format, ficha = {}
     },
     beats: x.beats,
   };
+  const speaking = new Set(spec.beats.map((b) => b.speaker).filter(Boolean));
+  for (const k of Object.keys(spec.cast)) if (!speaking.has(k)) delete spec.cast[k];
   writeSpec(ws, spec);
   writeLedger(ws, [...ledger.filter((e) => e.slug !== slug), { slug, ...fp, studioTone: rest.studioTone, sig: x.picks, pauta }]);
   return { spec, world: spec.world };

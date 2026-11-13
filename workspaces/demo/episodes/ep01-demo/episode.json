@@ -1,0 +1,90 @@
+{
+  "slug": "ep01-demo",
+  "title": "Mito: precisa aparecer na câmera",
+  "number": 1,
+  "series": "Inglês sem travar",
+  "format": "mito-vs-fato",
+  "freedom": "recipe",
+  "eleven": "TX3LPaxmHKxFdv7VOQHJ",
+  "captions": {
+    "y": 1290,
+    "size": 84
+  },
+  "post": {
+    "caption": "Mito: Vídeo curto precisa de rosto?\nFato: Não. Texto e narração também prendem.\n\nCriar vídeo curto não exige o que parece. Quer ver como funciona? Link na bio.",
+    "hashtags": [
+      "criacaodeconteudo",
+      "videocurto",
+      "reels",
+      "marketingdigital",
+      "pequenosnegocios",
+      "conteudoparacriadores"
+    ],
+    "shortsTitle": "Mito ou fato: Não. Texto e narração também prendem."
+  },
+  "cast": {},
+  "world": {
+    "place": "cafe",
+    "look": {
+      "me": {
+        "shirt": "#FF7A59",
+        "pants": "#1E1B4B",
+        "hair": "#111111",
+        "skin": "#F2C29B",
+        "hat": "beanie",
+        "hatColor": "#E5484D"
+      },
+      "other": {
+        "skin": "#F2C29B",
+        "hair": "#7A3B1D"
+      }
+    },
+    "camStyle": "push",
+    "studioTone": "menta",
+    "metaphor": "pile"
+  },
+  "beats": [
+    {
+      "id": "mito",
+      "type": "statement",
+      "narration": "Mito: vídeo curto *precisa* de rosto na tela.",
+      "params": {
+        "card": "Vídeo curto precisa de rosto?",
+        "good": false
+      }
+    },
+    {
+      "id": "fato",
+      "type": "statement",
+      "narration": "Fato: texto e narração também *prendem* a atenção.",
+      "params": {
+        "card": "Não. Texto e narração também prendem.",
+        "good": true
+      }
+    },
+    {
+      "id": "comparar",
+      "type": "compare",
+      "narration": "Quem se esconde da câmera desiste. O certo é: mostrar o produto e a ideia.",
+      "params": {
+        "wrong": "Aparecer na câmera sempre",
+        "right": "Mostrar produto e ideia"
+      }
+    },
+    {
+      "id": "virada",
+      "type": "title-card",
+      "narration": "Chega de adiar: conheça o *Vidforge*, que transforma seu roteiro em vídeo animado.",
+      "params": {
+        "card": "Vidforge: do roteiro ao vídeo"
+      }
+    },
+    {
+      "id": "fim",
+      "type": "end-card",
+      "narration": "Vidforge. Link na bio.",
+      "captions": false,
+      "hold": 1.6
+    }
+  ]
+}

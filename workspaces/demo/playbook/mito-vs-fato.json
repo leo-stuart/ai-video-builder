@@ -1,0 +1,94 @@
+{
+  "id": "mito-vs-fato",
+  "title": "Mito vs fato",
+  "desc": "Uma crença comum sobre criar vídeo curto é desmentida em um cartão, seguida da forma certa e da apresentação do Vidforge. 5 cenas, cerca de 20 s.",
+  "slots": [
+    {
+      "key": "myth",
+      "ask": "O mito, em narração, começando com \"Mito:\" e com *ênfase*.",
+      "example": "Mito: você *precisa* aparecer na câmera para criar vídeo."
+    },
+    {
+      "key": "mythCard",
+      "ask": "O mito para o cartão (até 60 caracteres).",
+      "example": "Precisa aparecer na câmera?"
+    },
+    {
+      "key": "fact",
+      "ask": "O fato, em narração, começando com \"Fato:\" e com *ênfase*.",
+      "example": "Fato: dá para criar com *texto* e narração, sem mostrar o rosto."
+    },
+    {
+      "key": "factCard",
+      "ask": "O fato para o cartão (até 60 caracteres).",
+      "example": "Não. Texto e narração bastam."
+    },
+    {
+      "key": "compareSay",
+      "ask": "Narração do errado e do certo, com dois-pontos antes do certo (\"O certo é: ...\").",
+      "example": "Quem espera o vídeo ficar perfeito nunca posta. O certo é: publicar todo dia."
+    },
+    {
+      "key": "wrong",
+      "ask": "O jeito errado, curto, para o cartão (até 30 caracteres).",
+      "example": "Esperar o vídeo perfeito"
+    },
+    {
+      "key": "right",
+      "ask": "O jeito certo, curto, para o cartão (até 30 caracteres).",
+      "example": "Publicar todo dia"
+    }
+  ],
+  "post": {
+    "caption": "Mito: {{mythCard}}\nFato: {{factCard}}\n\nCriar vídeo curto não exige o que parece. Quer ver como funciona? Link na bio.",
+    "shortsTitle": "Mito ou fato: {{factCard}}"
+  },
+  "beats": [
+    {
+      "id": "mito",
+      "type": "statement",
+      "narration": "{{myth}}",
+      "params": {
+        "card": "{{mythCard}}",
+        "good": false
+      }
+    },
+    {
+      "id": "fato",
+      "type": "statement",
+      "narration": "{{fact}}",
+      "params": {
+        "card": "{{factCard}}",
+        "good": true
+      }
+    },
+    {
+      "id": "comparar",
+      "type": "compare",
+      "narration": "{{compareSay}}",
+      "params": {
+        "wrong": "{{wrong}}",
+        "right": "{{right}}"
+      }
+    },
+    {
+      "id": "virada",
+      "type": "title-card",
+      "narration": "Chega de adiar: conheça o *Vidforge*, que transforma seu roteiro em vídeo animado.",
+      "params": {
+        "card": "Vidforge: do roteiro ao vídeo"
+      }
+    },
+    {
+      "id": "fim",
+      "type": "end-card",
+      "narration": "{{pool:fim}}",
+      "captions": false,
+      "hold": 1.6
+    }
+  ],
+  "target": [
+    15,
+    30
+  ]
+}
