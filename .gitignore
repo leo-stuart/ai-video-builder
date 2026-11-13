@@ -2,8 +2,11 @@ node_modules/
 out/
 .qa/
 .env*
+!env.example
 voice-raw/
 .cache/
-public/audio/
 voice/
 .DS_Store
+# Espaços de trabalho são do usuário, fora do git do motor; só o demo é público.
+workspaces/*
+!workspaces/demo/

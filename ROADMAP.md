@@ -16,22 +16,23 @@ Legenda: ✅ feito · 🔨 em andamento · ⬜ falta · 💤 depois do MVP
 * ✅ Validador com ~50 regras e níveis de liberdade (`recipe`, `guided`; `free` não testado)
 * ✅ Folhas de revisão rápidas, render por cena com cache, pacote por plataforma, calendário
 * ✅ CLI `vid` e skill para agentes; testado com Haiku (`recipe`) e Sonnet (`guided`)
+* ✅ Rede de regressão visual: 23 quadros de referência (hoje depende do espaço de trabalho do Pragma; migrar para `workspaces/demo`)
 
 ## MVP
 
 ### Etapa 1 — Rede de segurança
-* ⬜ `scripts/golden.mjs`: quadros de referência e comparação automática
+* ✅ `scripts/golden.mjs`: quadros de referência e comparação automática
 
 ### Etapa 2 — Núcleo
-* ⬜ `core/`: lógica dos scripts como funções que devolvem dados
-* ⬜ CLI reescrita como cliente fino do core
-* ⬜ Fila de tarefas longas com progresso (voz, render)
+* ✅ `core/`: lógica dos scripts como funções que devolvem dados
+* ✅ CLI reescrita como cliente fino do core
+* 🔨 Progresso de tarefas longas: o core já emite `onProgress`; a fila fica no servidor da UI
 
 ### Etapa 3 — Geral, não só Pragma
-* ⬜ Espaço de trabalho separado do motor (`workspace.json`, `playbook/`, `episodes/`)
-* ⬜ Pragma migrado para `workspaces/pragma` (fora do git público)
-* ⬜ Composição única `Episode` que recebe o JSON (habilita prévia ao vivo)
-* ⬜ Marca vinda de dados: tela final, pitch, menção obrigatória, regras do validador
+* ✅ Espaço de trabalho separado do motor (`workspace.json`, `playbook/`, `episodes/`)
+* ✅ Pragma migrado para `workspaces/pragma` (fora do git público)
+* ✅ Composição única `Episode` que recebe o JSON (habilita prévia ao vivo)
+* ✅ Marca vinda de dados: tela final, pitch, menção obrigatória, regras do validador
 * ⬜ `workspaces/demo`: marca de exemplo pública (o próprio builder), com 1 formato genérico e 3 pautas
 
 ### Etapa 4 — MCP

@@ -348,7 +348,7 @@ export const pitchHabit: Macro = (b) => {
       ...[0, 1, 2, 3, 4, 5, 6].map((i) => ({ type: "sfx" as const, name: "tick", at: 0.12 + i * 0.16, volume: 0.4 })),
       { type: "plate", text: P(b).plateText ?? "5 min", small: P(b).plateSmall ?? " /dia", tone: "white", at: 0.05, until: cut, left: 240, top: 300, size: 120, color: "C.indigo" },
       { type: "sfx", name: "whoosh", at: cut, volume: 0.3 },
-      { type: "phone", src: "img/08-speak.jpg", at: { frac: 0.62 }, left: 405, top: 235, width: 270 },
+      { type: "phone", at: { frac: 0.62 }, left: 405, top: 235, width: 270 },
     ],
   };
 };

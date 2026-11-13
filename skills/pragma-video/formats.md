@@ -1,6 +1,6 @@
 # Formatos
 
-Gerado por `vid docs`. Cada formato é uma sequência de cenas; você só preenche a ficha. Fichas de exemplo completas em `formats/examples/<formato>.json`.
+Gerado por `vid docs`. Cada formato é uma sequência de cenas; você só preenche a ficha. Fichas de exemplo completas em `playbook/examples/<formato>.json`.
 
 ## `diz-vs-ouve`: O que você diz vs o que ele ouve
 "Você" diz uma frase que parece certa, mas quem atende ouve outra coisa. Corrige com o tutor e acerta. 12 cenas, cerca de 35 s.

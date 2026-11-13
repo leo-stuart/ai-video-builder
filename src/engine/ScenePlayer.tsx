@@ -30,6 +30,7 @@ import {
   Studio,
   VOCE,
   Verdict,
+  useBrand,
   useCue,
   useScene,
   useShots,
@@ -195,6 +196,7 @@ const anchorsOf = (objs: any[]) => {
 /* ───────────── sobreposições (HTML por cima do 3D) ───────────── */
 
 const OverlayView: React.FC<{ o: any; cam: Cam; x: X; anchors: Record<string, [number, number, number]> }> = ({ o, cam, x, anchors }) => {
+  const brand = useBrand();
   const at = sec(o.at, x, 0);
   const until = o.until === undefined ? undefined : sec(o.until, x);
   const live = x.t >= at && (until === undefined || x.t < until);
@@ -217,12 +219,16 @@ const OverlayView: React.FC<{ o: any; cam: Cam; x: X; anchors: Record<string, [n
           </Stamp>
         </div>
       );
-    case "phone":
+    case "phone": {
+      // Sem `src`, usa a primeira tela do produto cadastrada na marca; sem nenhuma, não desenha o celular.
+      const src = o.src ?? brand.productShots?.[0];
+      if (!src) return null;
       return (
         <Pop at={at} out={until} from={o.from ?? "down"} style={{ left: o.left ?? 420, top: o.top ?? 235 }}>
-          <Phone src={o.src ?? "img/08-speak.jpg"} width={o.width ?? 270} tilt={o.tilt} />
+          <Phone src={src} width={o.width ?? 270} tilt={o.tilt} />
         </Pop>
       );
+    }
     case "plate":
       return (
         <Pop at={at} out={until} from={o.from} style={{ left: o.left ?? 90, top: o.top ?? 250 }}>

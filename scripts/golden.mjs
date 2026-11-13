@@ -3,18 +3,20 @@
 //
 //   node scripts/golden.mjs record   renderiza e grava golden/*.png + golden/manifest.json
 //   node scripts/golden.mjs check    renderiza em pasta temporária e compara (SSIM) com a referência
-import { bundle } from "@remotion/bundler";
 import { renderStill, selectComposition } from "@remotion/renderer";
 import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { getEpisode, inputPropsOf, makeBundle, resolveWorkspace } from "../core/index.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const goldenDir = join(root, "golden");
 const manifestFile = join(goldenDir, "manifest.json");
 const EPISODES = ["ep14-teste-haiku", "ep15-teste-sonnet"];
+// Espaço de trabalho dos episódios de referência: VB_WORKSPACE, ou workspaces/pragma.
+const ws = resolveWorkspace(process.env.VB_WORKSPACE ?? join(root, "workspaces/pragma"));
 const FPS = 30;
 const SCALE = 0.25;
 const FRACTION = 0.7;
@@ -24,23 +26,22 @@ let serveUrl = null;
 const chromiumOptions = { gl: "angle" };
 
 async function getBundle() {
-  serveUrl ??= await bundle({ entryPoint: join(root, "src/index.ts"), publicDir: join(root, "public") });
+  serveUrl ??= await makeBundle(ws);
   return serveUrl;
 }
 
-// Única parte que sabe localizar o episódio e passá-lo ao Remotion.
+// Única parte que sabe localizar o episódio e passá-lo ao Remotion: composição única "Episode" + inputProps.
 async function renderFrame(slug, frame, outFile) {
   const url = await getBundle();
-  const composition = await selectComposition({ serveUrl: url, id: slug, chromiumOptions });
-  await renderStill({ serveUrl: url, composition, frame, output: outFile, scale: SCALE, imageFormat: "png", chromiumOptions, logLevel: "error" });
+  const inputProps = await inputPropsOf(ws, slug);
+  const composition = await selectComposition({ serveUrl: url, id: "Episode", inputProps, chromiumOptions });
+  await renderStill({ serveUrl: url, composition, inputProps, frame, output: outFile, scale: SCALE, imageFormat: "png", chromiumOptions, logLevel: "error" });
 }
 
-function planFrames() {
+async function planFrames() {
   const list = [];
   for (const slug of EPISODES) {
-    const dir = join(root, "src/episodes", slug);
-    const script = JSON.parse(readFileSync(join(dir, "script.json"), "utf8"));
-    const timing = JSON.parse(readFileSync(join(dir, "timing.json"), "utf8"));
+    const { script, timing } = await getEpisode(ws, slug);
     let from = 0;
     for (const s of script.scenes) {
       const n = Math.round((timing.scenes[s.id].dur + (s.hold || 0)) * FPS);
@@ -61,7 +62,7 @@ function ssim(a, b) {
 }
 
 async function record() {
-  const frames = planFrames();
+  const frames = await planFrames();
   rmSync(goldenDir, { recursive: true, force: true });
   mkdirSync(goldenDir, { recursive: true });
   for (const [i, f] of frames.entries()) {

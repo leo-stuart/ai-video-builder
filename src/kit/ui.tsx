@@ -1,6 +1,7 @@
 import React from "react";
 import { AbsoluteFill, Img, staticFile } from "remotion";
 import { useSpring, useT } from "./anim";
+import { renderTagline, useBrand } from "./brand";
 import { C, F } from "./theme";
 
 /** Fundo da cena. Troque de cor entre cenas para marcar a virada de ideia. */
@@ -227,7 +228,7 @@ export const Meter: React.FC<{ at: number; from?: number; to: number; left: stri
   );
 };
 
-/** Celular com uma captura real do app (arquivo em public/img). */
+/** Celular com uma captura real do app (arquivo em `public/` do espaço de trabalho, ex.: img/tela.jpg). */
 export const Phone: React.FC<{ src: string; width?: number; tilt?: number }> = ({ src, width = 460, tilt = 0 }) => (
   <div
     style={{
@@ -257,28 +258,35 @@ export const Wave: React.FC<{ color?: string; bars?: number; height?: number }> 
   );
 };
 
-/** Tela final com a marca e a chamada. Feche todo episódio com ela. */
-export const EndCard: React.FC<{ line?: React.ReactNode; cta?: string }> = ({ line = <>Pare de estudar inglês. <b>Comece a falar.</b></>, cta = "Link na bio" }) => {
+/** Tela final com a marca e a chamada (lidas de `brand`). Feche todo episódio com ela. */
+export const EndCard: React.FC<{ line?: React.ReactNode; cta?: string }> = ({ line, cta }) => {
+  const brand = useBrand();
   const a = useSpring(0.05);
   const b = useSpring(0.5);
   const c = useSpring(1.1);
   const t = useT();
+  const text = line ?? (brand.tagline ? renderTagline(brand.tagline) : null);
+  const label = cta ?? brand.cta;
   return (
     <AbsoluteFill>
       <Bg color={C.indigo} />
       <div style={{ position: "absolute", top: 330, left: 0, right: 0, display: "flex", flexDirection: "column", alignItems: "center", gap: 46 }}>
-        <Img src={staticFile("img/logo-mark.png")} style={{ width: 330, transform: `scale(${a}) translateY(${Math.sin(t * 2.6) * 8}px)` }} />
-        <div style={{ fontFamily: F.display, fontWeight: 700, fontSize: 150, color: C.white, letterSpacing: -3, transform: `scale(${a})` }}>Pragma</div>
-        <div style={{ opacity: b, transform: `translateY(${(1 - b) * 60}px)` }}>
-          <Big color={C.white} accent={C.gold} size={84} width={860}>
-            {line}
-          </Big>
-        </div>
-        <div style={{ transform: `scale(${c * (1 + Math.sin(t * 5) * 0.03)})`, marginTop: 20 }}>
-          <Plate tone="gold" radius={999} pad="30px 70px" style={{ fontSize: 72, fontWeight: 700, color: C.ink, background: C.gold }}>
-            {cta} ↗
-          </Plate>
-        </div>
+        {brand.logo && <Img src={staticFile(brand.logo)} style={{ width: 330, transform: `scale(${a}) translateY(${Math.sin(t * 2.6) * 8}px)` }} />}
+        <div style={{ fontFamily: F.display, fontWeight: 700, fontSize: 150, color: C.white, letterSpacing: -3, transform: `scale(${a})` }}>{brand.name}</div>
+        {text && (
+          <div style={{ opacity: b, transform: `translateY(${(1 - b) * 60}px)` }}>
+            <Big color={C.white} accent={C.gold} size={84} width={860}>
+              {text}
+            </Big>
+          </div>
+        )}
+        {label && (
+          <div style={{ transform: `scale(${c * (1 + Math.sin(t * 5) * 0.03)})`, marginTop: 20 }}>
+            <Plate tone="gold" radius={999} pad="30px 70px" style={{ fontSize: 72, fontWeight: 700, color: C.ink, background: C.gold }}>
+              {label} ↗
+            </Plate>
+          </div>
+        )}
       </div>
     </AbsoluteFill>
   );

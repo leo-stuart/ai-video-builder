@@ -11,15 +11,13 @@ const expand = (b: Beat, w: World) => {
 };
 
 /** Transforma um episode.json (+ script e tempos) em um EpisodeDef que o Remotion sabe montar. */
-export const buildEpisode = (spec: EpisodeSpec, script: any, timing: any, customs: Record<string, React.FC> = {}): EpisodeDef => {
+export const buildEpisode = (spec: EpisodeSpec, script: any, timing: any): EpisodeDef => {
   const ctx = { world: spec.world };
   const visuals: Record<string, React.FC> = {};
   for (const b of spec.beats) {
-    if (b.type.startsWith("custom:")) {
-      const C = customs[b.type.slice(7)];
-      if (!C) throw new Error(`beat "${b.id}": falta src/episodes/${spec.slug}/custom/${b.type.slice(7)}.tsx`);
-      visuals[b.id] = C;
-    } else visuals[b.id] = () => <ScenePlayer data={b.scene ?? expand(b, spec.world)} ctx={ctx} />;
+    // Cenas em código (custom:) ficam fora do MVP: o validador as recusa antes do render.
+    if (b.type.startsWith("custom:")) throw new Error(`beat "${b.id}": tipos custom: ainda não são suportados.`);
+    visuals[b.id] = () => <ScenePlayer data={b.scene ?? expand(b, spec.world)} ctx={ctx} />;
   }
   return { script, timing, visuals, progress: false } as EpisodeDef;
 };

@@ -8,3 +8,4 @@ export * from "./Prag";
 export * from "./Person";
 export * from "./Captions";
 export * from "./Episode";
+export * from "./brand";

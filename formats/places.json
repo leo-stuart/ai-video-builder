@@ -1,9 +1,0 @@
-{
-  "cafe": { "attendant": "Caixa" },
-  "restaurante": { "attendant": "Garçom" },
-  "hotel": { "attendant": "Recepção" },
-  "imigracao": { "attendant": "Agente" },
-  "aeroporto": { "attendant": "Atendente" },
-  "loja": { "attendant": "Caixa" },
-  "farmacia": { "attendant": "Farmácia" }
-}

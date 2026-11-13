@@ -1,32 +1,38 @@
 {
-  "name": "pragma-videos",
+  "name": "ai-video-builder",
   "private": true,
   "version": "1.0.0",
-  "description": "Vídeos curtos animados (Reels/TikTok/Shorts) do Pragma, gerados por código com Remotion.",
+  "description": "Builder local de vídeos curtos animados (Reels/TikTok/Shorts) em Remotion + three.js, operado por CLI, agente (MCP) ou UI.",
   "scripts": {
     "studio": "remotion studio src/index.ts",
-    "tts": "node scripts/tts.mjs",
-    "render": "node scripts/render.mjs",
-    "sheet": "node scripts/sheet.mjs",
-    "new": "node scripts/new-episode.mjs",
-    "typecheck": "tsc --noEmit"
+    "vid": "node scripts/vid.mjs",
+    "golden": "node scripts/golden.mjs",
+    "typecheck": "tsc --noEmit",
+    "mcp": "node mcp/server.mjs",
+    "ui": "node ui/server.mjs",
+    "start": "node ui/server.mjs"
   },
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.2",
     "@react-three/fiber": "8.17.10",
     "@remotion/bundler": "4.0.543",
     "@remotion/cli": "4.0.543",
     "@remotion/fonts": "4.0.543",
+    "@remotion/player": "4.0.543",
     "@remotion/renderer": "4.0.543",
     "@remotion/three": "4.0.543",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "remotion": "4.0.543",
-    "three": "0.169.0"
+    "three": "0.169.0",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@types/react": "18.3.12",
     "@types/three": "0.169.0",
     "@types/webpack-env": "1.18.5",
-    "typescript": "5.6.3"
+    "@vitejs/plugin-react": "^6.3.0",
+    "typescript": "5.6.3",
+    "vite": "^8.3.8"
   }
 }
