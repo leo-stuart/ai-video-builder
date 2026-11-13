@@ -1,489 +1,556 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Player, type PlayerRef } from "@remotion/player";
-import { EpisodeComposition, episodeDuration, type EpisodeProps } from "../../src/engine/EpisodeComposition";
+import { EpisodeComposition, type EpisodeProps } from "../../src/engine/EpisodeComposition";
 import { FPS, H, W, sceneFrames } from "../../src/kit";
 import { api, type Job } from "./api";
-import { ErrorBox, Status } from "./App";
+import { Dialog, Rich, STATUS, fmtT, plain, who } from "./lib";
 import { useJob } from "./useJob";
 
-const STALE = /narração mudou depois da voz/;
-const KIND: Record<string, string> = { voice: "Gerar voz", frames: "Folhas de revisão", render: "Renderizar", pack: "Pacote" };
+type Issue = { scene?: string; message: string };
+type Val = { errors: Issue[]; warnings: Issue[]; ok: boolean };
+const STALE = /mudou depois da voz|sem voz\/tempo|sem áudio/;
+/** As mensagens do núcleo citam comandos de terminal; aqui a ação é um botão. */
+const human = (m: string) => m.replace(/\s*(Antes do render final )?[Rr]ode:? `?(node scripts\/)?vid[^.]*\.?`?/g, "").replace(/\s+$/, "") + (STALE.test(m) ? " Use o passo Voz." : "");
+const KIND: Record<string, string> = { voice: "Gerando voz", frames: "Gerando folhas de revisão", render: "Renderizando", pack: "Montando pacote" };
+const WORLD: Record<string, { label: string; opts: string[] }> = {
+  place: { label: "Lugar", opts: ["cafe", "restaurante", "hotel", "imigracao", "aeroporto", "loja", "farmacia"] },
+  metaphor: { label: "Metáfora", opts: ["scale", "bars", "pile"] },
+  camStyle: { label: "Câmera", opts: ["push", "pull", "slide"] },
+};
+const typing = () => /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName ?? "");
 
-type Modal = null | "voice" | "frames" | "render" | "pack";
-
-export const Editor: React.FC<{ slug: string; onChanged: () => void; onDeleted: () => void }> = ({ slug, onChanged, onDeleted }) => {
+export const Editor: React.FC<{ slug: string; onBack: () => void }> = ({ slug, onBack }) => {
   const [ep, setEp] = useState<any>(null);
-  const [error, setError] = useState<any>(null);
-  const [val, setVal] = useState<{ errors: any[]; warnings: any[]; ok: boolean } | null>(null);
+  const [val, setVal] = useState<Val | null>(null);
+  const [err, setErr] = useState<string | null>(null);
   const [sel, setSel] = useState<string | null>(null);
-  const [modal, setModal] = useState<Modal>(null);
-  const [confirmDel, setConfirmDel] = useState(false);
+  const [frame, setFrame] = useState(0);
+  const [playing, setPlaying] = useState(false);
+  const [tab, setTab] = useState<"cena" | "mundo" | "problemas">("cena");
+  const [modal, setModal] = useState<null | "voice" | "sheets" | "video" | "pack">(null);
+  const [sheets, setSheets] = useState<string[]>([]);
+  const [dirty, setDirty] = useState(false);
   const player = useRef<PlayerRef>(null);
+  const saveRef = useRef<() => void>(() => {});
 
   const load = useCallback(async () => {
     try {
-      const e = await api.get(`/api/episodes/${slug}`);
+      const [e, v] = await Promise.all([api.get(`/api/episodes/${slug}`), api.get<Val>(`/api/episodes/${slug}/validate`)]);
       setEp(e);
-      setError(null);
+      setVal(v);
+      setSel((s) => s ?? e.spec.beats[0]?.id ?? null);
       return e;
-    } catch (e) {
-      setError(e);
-    }
-  }, [slug]);
-  const check = useCallback(async () => {
-    try {
-      setVal(await api.get(`/api/episodes/${slug}/validate`));
     } catch (e: any) {
-      setVal({ errors: [{ message: `Não consegui validar: ${e.message}` }], warnings: [], ok: false });
+      setErr(e.message);
     }
   }, [slug]);
 
-  const { job, start, attach } = useJob(async (j) => {
-    await load();
-    await check();
-    onChanged();
+  const { job, start, attach, clear } = useJob((j) => {
+    load();
+    if (j.status !== "done") return;
+    if (j.kind === "frames") {
+      setSheets(j.result.sheets);
+      setModal("sheets");
+    }
+    if (j.kind === "render") setModal("video");
+    if (j.kind === "pack") setModal("pack");
   });
+  const running = job?.status === "running";
 
   useEffect(() => {
-    load().then((e) => {
-      if (e) {
-        setSel((s) => s ?? e.spec.beats[0]?.id ?? null);
-        if (e.job) attach(e.job);
-      }
-    });
-    check();
-  }, [load, check, attach]);
-
-  const inputProps: EpisodeProps | null = useMemo(() => (ep ? { spec: ep.spec, script: ep.script, timing: ep.timing, brand: ep.brand } : null), [ep]);
-  const duration = useMemo(() => (inputProps ? episodeDuration(inputProps) : 30), [inputProps]);
-  const starts = useMemo(() => {
-    const out: Record<string, number> = {};
-    if (!ep) return out;
-    let f = 0;
-    for (const s of sceneFrames({ script: ep.script, timing: ep.timing } as any)) {
-      out[s.id] = f;
-      f += s.frames;
-    }
-    return out;
+    load().then((e) => e?.job && attach(e.job));
+  }, [load]);
+  useEffect(() => {
+    if (ep) document.title = `${ep.spec.title} · Estúdio`;
   }, [ep]);
 
-  const select = (id: string) => {
-    setSel(id);
-    const f = starts[id];
-    if (f !== undefined) player.current?.seekTo(f);
-  };
+  const props: EpisodeProps | null = useMemo(() => (ep ? { spec: ep.spec, script: ep.script, timing: ep.timing, brand: ep.brand } : null), [ep]);
+  const scenes = useMemo(() => {
+    if (!ep) return [];
+    let at = 0;
+    return sceneFrames({ script: ep.script, timing: ep.timing } as any).map((s: any, i: number) => {
+      const beat = ep.spec.beats[i];
+      const t = ep.timing.scenes?.[s.id];
+      const voice = !t ? "none" : t.words.map((w: any) => w.t).join(" ") !== plain(beat.narration) ? "stale" : t.audio ? "ok" : "mute";
+      const o = { id: s.id as string, beat, from: at, frames: s.frames as number, voice };
+      at += s.frames;
+      return o;
+    });
+  }, [ep]);
+  const total = scenes.reduce((a, s) => a + s.frames, 0) || 1;
+  const current = scenes.find((s) => frame >= s.from && frame < s.from + s.frames) ?? scenes[0];
 
-  if (error && !ep) return <div className="page"><ErrorBox error={error} onRetry={load} /><a className="btn" href="#/">Voltar</a></div>;
-  if (!ep) return <div className="page"><p className="muted">Carregando episódio…</p></div>;
+  // O Player avisa o quadro atual; durante a reprodução a cena selecionada acompanha.
+  useEffect(() => {
+    const p = player.current;
+    if (!p) return;
+    const onF = (e: any) => setFrame(e.detail.frame);
+    const onP = () => setPlaying(true);
+    const onS = () => setPlaying(false);
+    p.addEventListener("frameupdate", onF);
+    p.addEventListener("play", onP);
+    p.addEventListener("pause", onS);
+    p.addEventListener("ended", onS);
+    return () => {
+      p.removeEventListener("frameupdate", onF);
+      p.removeEventListener("play", onP);
+      p.removeEventListener("pause", onS);
+      p.removeEventListener("ended", onS);
+    };
+  }, [!!props]);
+  useEffect(() => {
+    if (playing && current && !dirty) setSel(current.id);
+  }, [playing, current?.id, dirty]);
+
+  const go = useCallback(
+    (id: string, seek = true) => {
+      setSel(id);
+      setTab((t) => (t === "problemas" ? "cena" : t));
+      const s = scenes.find((x) => x.id === id);
+      if (seek && s) player.current?.seekTo(s.from + Math.min(s.frames - 1, Math.round(s.frames * 0.6)));
+      document.getElementById(`sc-${id}`)?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    },
+    [scenes],
+  );
+  const toggle = () => player.current?.toggle();
+
+  useEffect(() => {
+    const k = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "s") {
+        e.preventDefault();
+        saveRef.current();
+        return;
+      }
+      if (typing() || modal) return;
+      const i = scenes.findIndex((s) => s.id === sel);
+      if (e.key === " ") {
+        e.preventDefault();
+        toggle();
+      } else if (e.key === "ArrowDown" && scenes[i + 1]) {
+        e.preventDefault();
+        go(scenes[i + 1].id);
+      } else if (e.key === "ArrowUp" && scenes[i - 1]) {
+        e.preventDefault();
+        go(scenes[i - 1].id);
+      }
+    };
+    window.addEventListener("keydown", k);
+    return () => window.removeEventListener("keydown", k);
+  }, [scenes, sel, modal, go]);
+
+  if (err) return <div className="center"><div><div className="err">{err}</div><button className="btn" style={{ marginTop: 12 }} onClick={onBack}>← Voltar</button></div></div>;
+  if (!ep || !props || !val) return <div className="center"><span className="spin" /></div>;
 
   const beat = ep.spec.beats.find((b: any) => b.id === sel) ?? ep.spec.beats[0];
-  const staleIds = new Set<string>((val?.errors ?? []).filter((e) => STALE.test(e.message) && e.scene).map((e) => e.scene));
-  const running = job?.status === "running" ? job : null;
-  const hasAudio = Object.values<any>(ep.timing.scenes ?? {}).some((s) => s.audio);
+  const st = STATUS[ep.status] ?? STATUS.draft;
+  const scriptErrors = val.errors.filter((e) => !STALE.test(e.message));
+  const stale = scenes.some((s) => s.voice === "stale");
+  const noVoice = scenes.some((s) => s.voice === "none");
+  const mute = scenes.some((s) => s.voice === "mute");
+  const voiceOk = !stale && !noVoice && !mute;
+  const hasVideo = ep.files.video && (ep.status === "rendered" || ep.status === "packed");
+  const hasPack = ep.files.pack.length > 0 && ep.status === "packed";
+  const nextStep = scriptErrors.length ? "roteiro" : !voiceOk ? "voz" : !hasVideo ? (sheets.length ? "render" : "revisao") : !hasPack ? "pacote" : "";
+  const pct = job && running && job.progress.total ? (job.progress.done / job.progress.total) * 100 : running ? 8 : 0;
+  const stepBar = (k: Job["kind"]) => running && job!.kind === k && <span className="bar" style={{ width: `${pct}%` }} />;
+  const remove = async () => {
+    if (!confirm(`Apagar "${ep.spec.title}"? O áudio e os arquivos gerados deste vídeo também são apagados.`)) return;
+    try {
+      await api.del(`/api/episodes/${slug}`);
+      onBack();
+    } catch (e: any) {
+      setErr(e.message);
+    }
+  };
 
   return (
-    <div className="editor">
-      <header className="ehead">
-        <div className="etitle">
-          <h1>{ep.spec.title}</h1>
-          <div className="row gap wrap">
-            <code>{slug}</code>
-            <Status s={ep.status} />
-            <span className="chip">liberdade {ep.spec.freedom ?? "recipe"}</span>
-            <span className="muted">{(duration / FPS).toFixed(1)}s</span>
-          </div>
-        </div>
-        <div className="actions">
-          {running && <button className="chip busy" onClick={() => setModal(running.kind)}>{KIND[running.kind]}: {running.progress.done}/{running.progress.total || "…"}</button>}
-          <button className="btn" onClick={() => setModal("voice")}>Gerar voz</button>
-          <button className="btn" onClick={() => setModal("frames")}>Folhas de revisão</button>
-          <button className="btn" onClick={() => setModal("render")}>Renderizar</button>
-          <button className="btn" onClick={() => setModal("pack")}>Pacote</button>
-          <button className="btn ghost danger" onClick={() => setConfirmDel(true)} title="Apagar episódio">Apagar</button>
-        </div>
+    <div className="ed">
+      <header className="top">
+        <button className="back" onClick={onBack} aria-label="Voltar">←</button>
+        <h2>{ep.spec.title}</h2>
+        <span className="pill" style={{ ["--c" as any]: st.c }}>{st.label}</span>
+        <span className="tag">{ep.spec.format}</span>
+        <span className="tag">{ep.spec.freedom}</span>
+
+        <nav className="rail">
+          <button className={`step ${scriptErrors.length ? "bad" : "done"}${nextStep === "roteiro" ? " next" : ""}`} onClick={() => setTab("problemas")}>
+            <span className="n">{scriptErrors.length || "✓"}</span>Roteiro
+          </button>
+          <span className="sep" />
+          <button className={`step ${voiceOk ? "done" : stale ? "warn" : ""}${nextStep === "voz" ? " next" : ""}`} disabled={running} onClick={() => setModal("voice")}>
+            <span className="n">{voiceOk ? "✓" : stale ? "!" : "2"}</span>Voz{stale && <small>refazer</small>}{!stale && mute && <small>só tempos</small>}
+            {stepBar("voice")}
+          </button>
+          <span className="sep" />
+          <button className={`step ${sheets.length ? "done" : ""}${nextStep === "revisao" ? " next" : ""}`} disabled={running} onClick={() => (sheets.length ? setModal("sheets") : start("frames", slug, `/api/episodes/${slug}/frames`, {}))}>
+            <span className="n">{sheets.length ? "✓" : "3"}</span>Revisão
+            {stepBar("frames")}
+          </button>
+          <span className="sep" />
+          <button className={`step ${hasVideo ? "done" : ""}${nextStep === "render" ? " next" : ""}`} disabled={running || noVoice || !!scriptErrors.length} onClick={() => (hasVideo && !stale ? setModal("video") : start("render", slug, `/api/episodes/${slug}/render`, {}))}>
+            <span className="n">{hasVideo ? "✓" : "4"}</span>Render
+            {stepBar("render")}
+          </button>
+          <span className="sep" />
+          <button className={`step ${hasPack ? "done" : ""}${nextStep === "pacote" ? " next" : ""}`} disabled={running || !ep.files.video} onClick={() => (hasPack ? setModal("pack") : start("pack", slug, `/api/episodes/${slug}/pack`, {}))}>
+            <span className="n">{hasPack ? "✓" : "5"}</span>Pacote
+            {stepBar("pack")}
+          </button>
+          <button className="btn ghost danger" style={{ marginLeft: 8 }} onClick={remove} disabled={running} title="Apagar vídeo">Apagar</button>
+        </nav>
       </header>
 
-      {staleIds.size > 0 && (
-        <div className="alert alert-warn" role="status">
-          <span><strong>A narração mudou depois da voz</strong> em {staleIds.size} cena(s) ({[...staleIds].join(", ")}). A prévia usa os tempos antigos: gere a voz de novo antes de renderizar.</span>
-          <button className="btn small" onClick={() => setModal("voice")}>Gerar voz…</button>
-        </div>
-      )}
-
       <div className="cols">
-        <section className="scenes" aria-label="Cenas">
-          <h2>Cenas <span className="muted">({ep.spec.beats.length})</span></h2>
-          <ol>
-            {ep.spec.beats.map((b: any, i: number) => (
-              <li key={b.id}>
-                <button className={`scene ${b.id === beat?.id ? "on" : ""}`} onClick={() => select(b.id)}>
-                  <span className="sn">{i + 1}</span>
-                  <span className="sbody">
-                    <span className="row gap wrap"><strong>{b.id}</strong><span className="chip">{b.type}</span>{b.speaker && <span className="chip spk">{b.speaker}</span>}{staleIds.has(b.id) && <span className="chip st-draft">voz desatualizada</span>}</span>
-                    <span className="snar">{b.narration}</span>
+        <section className="col">
+          <div className="col-h">
+            Roteiro <span className="r mono">{scenes.length} cenas · {fmtT(total / FPS)}</span>
+          </div>
+          <div className="scroll">
+            {scenes.map((s, i) => {
+              const w = who(s.beat.speaker);
+              const label = s.beat.speaker ? (ep.spec.cast?.[s.beat.speaker]?.label ?? w.label) : w.label;
+              return (
+                <button key={s.id} id={`sc-${s.id}`} className={`scene${sel === s.id ? " on" : ""}`} style={{ ["--c" as any]: w.c }} onClick={() => go(s.id)}>
+                  <span className="i">{i + 1}</span>
+                  <span>
+                    <span className="hd">
+                      <span className="who">{label}</span>
+                      <span className="tag">{s.beat.type}</span>
+                      {s.voice === "stale" && <span className="flag">● voz desatualizada</span>}
+                      {s.voice === "none" && <span className="flag">● sem voz</span>}
+                      <span className="secs">{(s.frames / FPS).toFixed(1)}s</span>
+                    </span>
+                    <span className="tx"><Rich text={s.beat.narration} /></span>
+                    {s.beat.sub && <span className="sub" style={{ display: "block" }}>{s.beat.sub}</span>}
                   </span>
                 </button>
-              </li>
-            ))}
-          </ol>
-        </section>
-
-        <section className="stage" aria-label="Prévia">
-          <div className="phone">
-            <Player
-              ref={player}
-              component={EpisodeComposition as any}
-              inputProps={inputProps as any}
-              durationInFrames={duration}
-              compositionWidth={W}
-              compositionHeight={H}
-              fps={FPS}
-              controls
-              loop
-              clickToPlay
-              acknowledgeRemotionLicense
-              numberOfSharedAudioTags={12}
-              spaceKeyToPlayOrPause={false}
-              style={{ width: "100%", height: "100%" }}
-            />
+              );
+            })}
           </div>
-          <p className="muted small center">{hasAudio ? "Prévia com áudio (voz gerada)." : "Prévia sem áudio: este episódio só tem tempos (voz não gerada)."}</p>
         </section>
 
-        <section className="inspector" aria-label="Cena selecionada">
-          {beat && <SceneForm key={`${beat.id}:${JSON.stringify(beat)}`} slug={slug} beat={beat} onSaved={async () => { await load(); await check(); onChanged(); }} />}
-          <WorldBox slug={slug} spec={ep.spec} onSaved={async () => { await load(); onChanged(); }} />
+        <section className="col stage">
+          <div className={`phone${playing ? "" : " paused"}`} onClick={toggle}>
+            <Player ref={player} component={EpisodeComposition as any} inputProps={props as any} durationInFrames={total} compositionWidth={W} compositionHeight={H} fps={FPS} style={{ width: "100%", height: "100%" }} acknowledgeRemotionLicense />
+            <div className="cover"><b>▶</b></div>
+          </div>
+          <div className="tl">
+            <div className="tl-top">
+              <button className="play" onClick={toggle} aria-label={playing ? "Pausar" : "Tocar"}>{playing ? "❚❚" : "▶"}</button>
+              <span className="now">{current?.id}</span>
+              <span>{current?.beat.type}</span>
+              <span className="r">{fmtT(frame / FPS)} / {fmtT(total / FPS)}</span>
+            </div>
+            <div className="track">
+              {scenes.map((s) => (
+                <button key={s.id} className={`seg${current?.id === s.id ? " on" : ""}`} style={{ flex: `${s.frames} 0 0`, ["--c" as any]: who(s.beat.speaker).c }} title={`${s.id} · ${(s.frames / FPS).toFixed(1)}s`} onClick={() => { setSel(s.id); player.current?.seekTo(s.from); document.getElementById(`sc-${s.id}`)?.scrollIntoView({ block: "nearest", behavior: "smooth" }); }}>
+                  <span>{s.id}</span>
+                </button>
+              ))}
+              <span className="head" style={{ left: `${(frame / total) * 100}%` }} />
+            </div>
+            <div className="hint">
+              <span><span className="kbd">espaço</span> tocar</span>
+              <span><span className="kbd">↑</span> <span className="kbd">↓</span> trocar de cena</span>
+              <span><span className="kbd">⌘S</span> salvar</span>
+              {mute && !noVoice && <span style={{ color: "var(--coral)" }}>prévia sem voz</span>}
+            </div>
+          </div>
+        </section>
+
+        <section className="col">
+          <div className="tabs">
+            <button className={`tab${tab === "cena" ? " on" : ""}`} onClick={() => setTab("cena")}>Cena</button>
+            <button className={`tab${tab === "mundo" ? " on" : ""}`} onClick={() => setTab("mundo")}>Mundo</button>
+            <button className={`tab${tab === "problemas" ? " on" : ""}`} onClick={() => setTab("problemas")}>
+              Problemas
+              {val.errors.length > 0 && <span className="ct" style={{ ["--c" as any]: "var(--red)" }}>{val.errors.length}</span>}
+              {val.warnings.length > 0 && <span className="ct" style={{ ["--c" as any]: "var(--gold)" }}>{val.warnings.length}</span>}
+            </button>
+          </div>
+          {tab === "cena" && beat && <SceneForm key={beat.id} slug={slug} beat={beat} onSaved={load} onDirty={setDirty} saveRef={saveRef} />}
+          {tab === "mundo" && <World slug={slug} spec={ep.spec} onSaved={load} />}
+          {tab === "problemas" && (
+            <div className="scroll">
+              {!val.errors.length && !val.warnings.length && (
+                <div className="allgood"><b>✓</b>Nada a apontar.</div>
+              )}
+              {[...val.errors.map((e) => ({ ...e, bad: true })), ...val.warnings.map((e) => ({ ...e, bad: false }))].map((it, i) => {
+                const sc = it.scene ?? it.message.match(/cena (?:\d+ \()?"([a-z0-9]+)"/)?.[1];
+                return (
+                  <button key={i} className="issue" style={{ ["--c" as any]: it.bad ? "var(--red)" : "var(--gold)" }} onClick={() => sc && scenes.some((s) => s.id === sc) && go(sc)}>
+                    <i>{it.bad ? "!" : "?"}</i>
+                    <span>{human(it.message)}</span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
         </section>
       </div>
 
-      <section className="valid" aria-label="Validação">
-        <div className="row gap between">
-          <h2>Validação</h2>
-          <span className={`chip ${val?.ok ? "st-packed" : val ? "st-draft" : ""}`}>{val ? `${val.errors.length} erro(s) · ${val.warnings.length} aviso(s)` : "validando…"}</span>
+      {job && (running || job.status === "error") && (
+        <div className={`toast${job.status === "error" ? " bad" : ""}`}>
+          {running ? <span className="spin" /> : <span style={{ color: "var(--red)" }}>✕</span>}
+          <span>
+            <b>{running ? KIND[job.kind] : "Falhou"}</b>
+            <span className="mute"> {running ? (job.progress.label ?? "") : job.error?.message}</span>
+          </span>
+          {running && job.progress.total > 0 && (
+            <>
+              <span className="pg"><i style={{ width: `${pct}%` }} /></span>
+              <span className="mono mute">{job.progress.done}/{job.progress.total}</span>
+            </>
+          )}
+          {!running && <button className="btn ghost" onClick={clear}>Fechar</button>}
         </div>
-        {val && val.errors.length + val.warnings.length === 0 && <p className="muted">Nada a apontar. Pode seguir.</p>}
-        <ul>
-          {val?.errors.map((e, i) => <ValItem key={`e${i}`} kind="erro" item={e} onPick={select} />)}
-          {val?.warnings.map((e, i) => <ValItem key={`w${i}`} kind="aviso" item={e} onPick={select} />)}
-        </ul>
-      </section>
+      )}
 
-      {modal === "voice" && <VoiceDialog slug={slug} ep={ep} job={job?.kind === "voice" ? job : null} onStart={(provider) => start("voice", slug, `/api/episodes/${slug}/voice`, { provider, confirm: true })} onClose={() => setModal(null)} />}
-      {modal === "frames" && <FramesDialog slug={slug} ep={ep} sel={beat?.id} job={job?.kind === "frames" ? job : null} onStart={(scene) => start("frames", slug, `/api/episodes/${slug}/frames`, { scene })} onClose={() => setModal(null)} />}
-      {modal === "render" && <RenderDialog slug={slug} ep={ep} job={job?.kind === "render" ? job : null} stale={staleIds.size > 0} onStart={(force) => start("render", slug, `/api/episodes/${slug}/render`, { force })} onClose={() => setModal(null)} />}
-      {modal === "pack" && <PackDialog slug={slug} ep={ep} job={job?.kind === "pack" ? job : null} onStart={() => start("pack", slug, `/api/episodes/${slug}/pack`)} onClose={() => setModal(null)} />}
-      {confirmDel && (
-        <Dialog title="Apagar episódio?" onClose={() => setConfirmDel(false)}>
-          <p>Isso apaga <code>{slug}</code>, o áudio, o vídeo e o pacote dele, e o tira do histórico de variedade. Não dá para desfazer.</p>
-          <div className="row gap end">
-            <button className="btn" onClick={() => setConfirmDel(false)}>Cancelar</button>
-            <button className="btn danger-fill" onClick={async () => { try { await api.del(`/api/episodes/${slug}`); onDeleted(); } catch (e) { setError(e); setConfirmDel(false); } }}>Apagar de vez</button>
+      {modal === "voice" && (
+        <VoiceDialog
+          ep={ep}
+          scenes={scenes}
+          onClose={() => setModal(null)}
+          onGo={(body) => {
+            setModal(null);
+            start("voice", slug, `/api/episodes/${slug}/voice`, body);
+          }}
+        />
+      )}
+      {modal === "sheets" && <Sheets sheets={sheets} onClose={() => setModal(null)} onRedo={() => { setModal(null); start("frames", slug, `/api/episodes/${slug}/frames`, {}); }} />}
+      {modal === "video" && (
+        <Dialog title="Vídeo renderizado" sub="Assista com som antes de empacotar: pronúncia, volume e sincronia só se conferem ouvindo." onClose={() => setModal(null)} footer={<><button className="btn" onClick={() => { setModal(null); start("render", slug, `/api/episodes/${slug}/render`, {}); }}>Renderizar de novo</button><button className="btn gold" onClick={() => { setModal(null); start("pack", slug, `/api/episodes/${slug}/pack`, {}); }}>Montar pacote →</button></>}>
+          <div style={{ display: "grid", placeItems: "center", paddingBottom: 16 }}>
+            <video src={`/files/out/${slug}.mp4?v=${Date.now()}`} controls autoPlay style={{ height: "62vh", borderRadius: 18, background: "#000" }} />
           </div>
         </Dialog>
       )}
-      {error && ep && <div className="toast"><ErrorBox error={error} /></div>}
+      {modal === "pack" && <Pack slug={slug} files={ep.files.pack} onClose={() => setModal(null)} />}
     </div>
   );
 };
 
-const ValItem: React.FC<{ kind: string; item: any; onPick: (id: string) => void }> = ({ kind, item, onPick }) => (
-  <li>
-    <button className={`vitem ${kind}`} onClick={() => item.scene && onPick(item.scene)} disabled={!item.scene}>
-      <span className={`chip ${kind === "erro" ? "st-draft" : "st-voiced"}`}>{kind}</span>
-      {item.scene && <code>{item.scene}</code>}
-      <span>{item.message}</span>
-    </button>
-  </li>
-);
-
-/* ───────────── campos da cena ───────────── */
-
-const asText = (v: any) => (typeof v === "string" ? v : JSON.stringify(v, null, typeof v === "object" ? 2 : 0));
-const parseLike = (orig: any, txt: string) => {
-  if (typeof orig === "string") return txt;
-  if (typeof orig === "number") {
-    const n = Number(txt);
-    if (txt.trim() === "" || Number.isNaN(n)) throw new Error("precisa ser um número");
-    return n;
-  }
-  if (typeof orig === "boolean") {
-    if (txt.trim() !== "true" && txt.trim() !== "false") throw new Error("use true ou false");
-    return txt.trim() === "true";
-  }
-  try {
-    return JSON.parse(txt);
-  } catch {
-    throw new Error("JSON inválido");
-  }
-};
-
-const SceneForm: React.FC<{ slug: string; beat: any; onSaved: () => Promise<void> }> = ({ slug, beat, onSaved }) => {
-  const init = () => ({
-    narration: beat.narration ?? "",
-    sub: beat.sub ?? "",
-    banner: beat.banner ?? "",
-    hold: String(beat.hold ?? 0),
-    params: Object.fromEntries(Object.entries(beat.params ?? {}).map(([k, v]) => [k, asText(v)])) as Record<string, string>,
-  });
+/* ───────── formulário da cena ───────── */
+const SceneForm: React.FC<{ slug: string; beat: any; onSaved: () => void; onDirty: (d: boolean) => void; saveRef: React.MutableRefObject<() => void> }> = ({ slug, beat, onSaved, onDirty, saveRef }) => {
+  const init = useMemo(() => ({ narration: beat.narration ?? "", sub: beat.sub ?? "", hold: String(beat.hold ?? ""), params: Object.fromEntries(Object.entries(beat.params ?? {}).map(([k, v]) => [k, String(v)])) as Record<string, string> }), [beat]);
   const [f, setF] = useState(init);
+  const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
-  const [saving, setSaving] = useState(false);
-  const [ok, setOk] = useState(false);
+  useEffect(() => setF(init), [init]);
+
+  const fields = useMemo(() => {
+    const o: Record<string, any> = {};
+    if (f.narration !== init.narration) o.narration = f.narration;
+    if (f.sub !== init.sub) o.sub = f.sub;
+    if (f.hold !== init.hold) o.hold = Number(f.hold) || 0;
+    for (const k of Object.keys(f.params)) {
+      if (f.params[k] === init.params[k]) continue;
+      const was = beat.params[k];
+      o[`params.${k}`] = typeof was === "number" ? Number(f.params[k]) : typeof was === "boolean" ? f.params[k] === "true" : f.params[k];
+    }
+    return o;
+  }, [f, init, beat]);
+  const dirty = Object.keys(fields).length > 0;
+  useEffect(() => {
+    onDirty(dirty);
+    return () => onDirty(false);
+  }, [dirty]);
 
   const save = async () => {
+    if (!dirty || busy) return;
+    setBusy(true);
     setErr(null);
-    setOk(false);
-    const fields: Record<string, any> = {};
-    try {
-      if (f.narration !== (beat.narration ?? "")) fields.narration = f.narration;
-      if (f.sub !== (beat.sub ?? "")) fields.sub = f.sub;
-      if (f.banner !== (beat.banner ?? "")) fields.banner = f.banner;
-      if (Number(f.hold) !== (beat.hold ?? 0)) {
-        if (Number.isNaN(Number(f.hold)) || Number(f.hold) < 0) throw new Error("hold: precisa ser um número maior ou igual a 0");
-        fields.hold = Number(f.hold);
-      }
-      for (const [k, txt] of Object.entries(f.params)) {
-        if (txt !== asText(beat.params[k])) {
-          try {
-            fields[`params.${k}`] = parseLike(beat.params[k], txt);
-          } catch (e: any) {
-            throw new Error(`${k}: ${e.message}`);
-          }
-        }
-      }
-    } catch (e: any) {
-      return setErr(e.message);
-    }
-    if (!Object.keys(fields).length) return setErr("Nada mudou.");
-    setSaving(true);
     try {
       await api.post(`/api/episodes/${slug}/scene`, { type: "set", id: beat.id, fields });
-      setOk(true);
       await onSaved();
     } catch (e: any) {
       setErr(e.message);
     }
-    setSaving(false);
+    setBusy(false);
   };
+  saveRef.current = save;
+  const w = who(beat.speaker);
 
-  const set = (k: string, v: string) => { setF((p) => ({ ...p, [k]: v })); setOk(false); };
-  const pk = Object.keys(f.params);
   return (
-    <div className="box">
-      <h2>Cena <code>{beat.id}</code> <span className="chip">{beat.type}</span></h2>
-      <label className="field">
-        <span>Narração</span>
-        <textarea rows={4} value={f.narration} onChange={(e) => set("narration", e.target.value)} />
-        <em className="hint">Inglês entre [en]…[/en]; ênfase com *palavra*.</em>
-      </label>
-      <label className="field"><span>Sub (tradução curta)</span><input value={f.sub} onChange={(e) => set("sub", e.target.value)} /></label>
-      <div className="row gap">
-        <label className="field grow"><span>Banner</span><input value={f.banner} onChange={(e) => set("banner", e.target.value)} /></label>
-        <label className="field w90"><span>Hold (s)</span><input inputMode="decimal" value={f.hold} onChange={(e) => set("hold", e.target.value)} /></label>
+    <>
+      <div className="scroll">
+        <div className="pad">
+          <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+            <span className="dot" style={{ ["--c" as any]: w.c }} />
+            <h3 style={{ fontSize: 18 }}>{beat.id}</h3>
+            <span className="tag">{beat.type}</span>
+          </div>
+          <div className="f">
+            <label>Fala <span>[en]inglês[/en] · *ênfase*</span></label>
+            <textarea className={`in${f.narration !== init.narration ? " dirty" : ""}`} value={f.narration} onChange={(e) => setF({ ...f, narration: e.target.value })} spellCheck={false} />
+            <div className="preview"><Rich text={f.narration || " "} /></div>
+          </div>
+          <div className="row2">
+            <div className="f">
+              <label>Tradução na tela</label>
+              <input className={`in${f.sub !== init.sub ? " dirty" : ""}`} value={f.sub} onChange={(e) => setF({ ...f, sub: e.target.value })} placeholder="opcional" />
+            </div>
+            <div className="f">
+              <label>Pausa (s)</label>
+              <input className={`in${f.hold !== init.hold ? " dirty" : ""}`} value={f.hold} onChange={(e) => setF({ ...f, hold: e.target.value })} inputMode="decimal" placeholder="0" />
+            </div>
+          </div>
+          {Object.keys(f.params).length > 0 && (
+            <>
+              <div className="col-h" style={{ padding: 0, border: 0, height: "auto" }}>Na tela</div>
+              {Object.keys(f.params).map((k) => (
+                <div className="f" key={k}>
+                  <label>{k}</label>
+                  <input className={`in${f.params[k] !== init.params[k] ? " dirty" : ""}`} value={f.params[k]} onChange={(e) => setF({ ...f, params: { ...f.params, [k]: e.target.value } })} />
+                </div>
+              ))}
+            </>
+          )}
+          {err && <div className="err">{err}</div>}
+        </div>
       </div>
-      {pk.length > 0 && <h3>Parâmetros</h3>}
-      {pk.map((k) => (
-        <label className="field" key={k}>
-          <span><code>{k}</code></span>
-          {f.params[k].length > 50 || f.params[k].includes("\n") ? <textarea rows={Math.min(8, f.params[k].split("\n").length + 1)} value={f.params[k]} onChange={(e) => setF((p) => ({ ...p, params: { ...p.params, [k]: e.target.value } }))} /> : <input value={f.params[k]} onChange={(e) => setF((p) => ({ ...p, params: { ...p.params, [k]: e.target.value } }))} />}
-        </label>
-      ))}
-      {err && <p className="hint bad" role="alert">{err}</p>}
-      <div className="row gap">
-        <button className="btn primary" onClick={save} disabled={saving}>{saving ? "Salvando…" : "Salvar"}</button>
-        <button className="btn" onClick={() => { setF(init()); setErr(null); setOk(false); }}>Desfazer</button>
-        {ok && <span className="ok">Salvo.</span>}
+      <div className="savebar">
+        <button className="btn gold" disabled={!dirty || busy} onClick={save}>{busy && <span className="spin" />}Salvar cena</button>
+        <button className="btn ghost" disabled={!dirty || busy} onClick={() => setF(init)}>Desfazer</button>
+        {dirty && f.narration !== init.narration && <span className="mute" style={{ fontSize: 12 }}>a voz desta cena será refeita</span>}
       </div>
-    </div>
+    </>
   );
 };
 
-const WorldBox: React.FC<{ slug: string; spec: any; onSaved: () => void }> = ({ slug, spec, onSaved }) => {
-  const recipe = (spec.freedom ?? "recipe") === "recipe";
-  const w = spec.world ?? {};
-  const [f, setF] = useState({ place: w.place ?? "", metaphor: w.metaphor ?? "", camStyle: w.camStyle ?? "" });
+/* ───────── mundo ───────── */
+const World: React.FC<{ slug: string; spec: any; onSaved: () => void }> = ({ slug, spec, onSaved }) => {
+  const locked = spec.freedom === "recipe";
   const [err, setErr] = useState<string | null>(null);
-  const save = async () => {
+  const set = async (k: string, v: string) => {
     setErr(null);
     try {
-      await api.post(`/api/episodes/${slug}/scene`, { type: "world", fields: f });
-      onSaved();
+      await api.post(`/api/episodes/${slug}/scene`, { type: "world", fields: { [k]: v } });
+      await onSaved();
     } catch (e: any) {
       setErr(e.message);
     }
   };
+  const look = spec.world.look?.me ?? {};
   return (
-    <div className="box">
-      <h2>Mundo do episódio</h2>
-      {(["place", "metaphor", "camStyle"] as const).map((k) => (
-        <label className="field" key={k}>
-          <span>{{ place: "Lugar", metaphor: "Metáfora", camStyle: "Câmera" }[k]}</span>
-          <input value={f[k]} readOnly={recipe} onChange={(e) => setF({ ...f, [k]: e.target.value })} />
-        </label>
-      ))}
-      {recipe ? <p className="muted small">Somente leitura no nível recipe. Crie o episódio com liberdade guided para mudar o mundo.</p> : (
-        <>
-          {err && <p className="hint bad">{err}</p>}
-          <button className="btn" onClick={save}>Salvar mundo</button>
-        </>
-      )}
-    </div>
-  );
-};
-
-/* ───────────── diálogos ───────────── */
-
-const Dialog: React.FC<{ title: string; onClose: () => void; wide?: boolean; children: React.ReactNode }> = ({ title, onClose, wide, children }) => {
-  useEffect(() => {
-    const k = (e: KeyboardEvent) => e.key === "Escape" && onClose();
-    addEventListener("keydown", k);
-    return () => removeEventListener("keydown", k);
-  }, [onClose]);
-  return (
-    <div className="overlay" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
-      <div className={`dialog ${wide ? "wide" : ""}`} role="dialog" aria-modal="true" aria-label={title}>
-        <div className="dhead"><h2>{title}</h2><button className="btn ghost" onClick={onClose} aria-label="Fechar">✕</button></div>
-        <div className="dbody">{children}</div>
-      </div>
-    </div>
-  );
-};
-
-const Progress: React.FC<{ job: Job }> = ({ job }) => {
-  const { done, total, label } = job.progress;
-  const pct = total ? Math.round((done / total) * 100) : 0;
-  return (
-    <div className="progress-box" role="status">
-      <div className="bar"><div style={{ width: `${total ? pct : 8}%` }} className={total ? "" : "indet"} /></div>
-      <div className="row between"><span>{label || job.progress.step}</span><span className="muted">{total ? `${done}/${total}` : ""}</span></div>
-    </div>
-  );
-};
-
-const JobState: React.FC<{ job: Job | null; children?: React.ReactNode }> = ({ job, children }) => {
-  if (!job) return null;
-  if (job.status === "running") return <Progress job={job} />;
-  if (job.status === "error") return <div className="alert alert-error" role="alert"><strong>A tarefa falhou.</strong><pre>{job.error?.message}</pre></div>;
-  return <>{children}</>;
-};
-
-const VoiceDialog: React.FC<{ slug: string; ep: any; job: Job | null; onStart: (provider?: string) => void; onClose: () => void }> = ({ ep, job, onStart, onClose }) => {
-  const [bal, setBal] = useState<any | undefined>(undefined);
-  const [mode, setMode] = useState<"none" | "default" | "say">("none");
-  useEffect(() => {
-    api.get("/api/voice/balance").then((r) => { setBal(r.balance); }).catch(() => setBal(null));
-  }, []);
-  const lines = ep.spec.beats.map((b: any) => {
-    const t = ep.timing.scenes?.[b.id];
-    const plain = (s: string) => s.replace(/\[\/?en\]/g, "").replace(/\*/g, "").split(/\s+/).filter(Boolean).join(" ");
-    const cached = !!t && t.audio && t.words.map((w: any) => w.t).join(" ") === plain(b.narration);
-    return { id: b.id, speaker: b.speaker, text: b.narration, cached, chars: plain(b.narration).length };
-  });
-  const newChars = lines.filter((l: any) => !l.cached).reduce((a: number, l: any) => a + l.chars, 0);
-  const paid = mode === "default";
-  const started = !!job;
-  return (
-    <Dialog title="Gerar voz" onClose={onClose} wide>
-      {!started && (
-        <>
-          <div className="alert alert-info">
-            {bal === undefined && "Consultando saldo…"}
-            {bal === null && <>Sem chave de voz (<code>ELEVENLABS_API_KEY</code> em <code>.env.local</code> do espaço de trabalho). Dá para gerar só os tempos, ou usar a voz do sistema (rascunho).</>}
-            {bal && <>Saldo ElevenLabs: <strong>{(bal.limit - bal.used).toLocaleString("pt-BR")}</strong> caracteres livres (plano {bal.plan}; usados {bal.used.toLocaleString("pt-BR")} de {bal.limit.toLocaleString("pt-BR")}).</>}
+    <div className="scroll">
+      <div className="pad">
+        {locked && <div className="box mute" style={{ margin: 0 }}>Este vídeo está no nível <b style={{ color: "var(--text)" }}>recipe</b>: o mundo foi sorteado e não muda. Crie no nível <b style={{ color: "var(--text)" }}>guided</b> para escolher.</div>}
+        {Object.entries(WORLD).map(([k, d]) => (
+          <div className="f" key={k}>
+            <label>{d.label}</label>
+            <div className="chips">
+              {d.opts.map((o) => (
+                <button key={o} className={`chip${spec.world[k] === o ? " on" : ""}`} disabled={locked} onClick={() => spec.world[k] !== o && set(k, o)}>{o}</button>
+              ))}
+            </div>
           </div>
-          <fieldset className="modes">
-            <label><input type="radio" checked={mode === "none"} onChange={() => setMode("none")} /> <span><strong>Só tempos, sem custo</strong><small>provider none: calcula a duração das cenas; o vídeo sai mudo.</small></span></label>
-            <label><input type="radio" checked={mode === "say"} onChange={() => setMode("say")} /> <span><strong>Voz do sistema (rascunho, sem custo)</strong><small>say do macOS: serve para ouvir o ritmo.</small></span></label>
-            <label className={bal ? "" : "off"}><input type="radio" disabled={!bal} checked={mode === "default"} onChange={() => setMode("default")} /> <span><strong>Voz do espaço de trabalho (gasta créditos)</strong><small>cenas já em cache não gastam. Estimativa: até {newChars.toLocaleString("pt-BR")} caracteres novos.</small></span></label>
-          </fieldset>
-          <h3>Falas ({lines.length})</h3>
-          <ol className="lines">
-            {lines.map((l: any) => (
-              <li key={l.id}><code>{l.id}</code>{l.speaker && <span className="chip spk">{l.speaker}</span>}<span className={`chip ${l.cached ? "st-packed" : "st-voiced"}`}>{l.cached ? "em cache" : "nova"}</span><span>{l.text}</span></li>
+        ))}
+        <div className="f">
+          <label>Elenco sorteado</label>
+          <div className="chips">
+            {["shirt", "pants", "hair", "skin"].filter((k) => look[k]).map((k) => (
+              <span key={k} className="tag" style={{ height: 28 }}><span className="dot" style={{ ["--c" as any]: look[k], width: 12, height: 12 }} />{k}</span>
             ))}
-          </ol>
-          <div className="row gap end">
-            <button className="btn" onClick={onClose}>Cancelar</button>
-            <button className={`btn ${paid ? "danger-fill" : "primary"}`} onClick={() => onStart(mode === "default" ? undefined : mode)}>{paid ? "Sim, gerar voz e gastar créditos" : mode === "say" ? "Sim, gerar voz do sistema" : "Gerar só os tempos"}</button>
+            {look.hat && look.hat !== "none" && <span className="tag" style={{ height: 28 }}>{look.hat}</span>}
           </div>
-        </>
-      )}
-      <JobState job={job}>
-        {job?.status === "done" && (
-          <div className="alert alert-ok">
-            <strong>Voz pronta:</strong> {job.result.seconds.toFixed(1)}s no total, voz "{job.result.provider}".
-            {job.result.warnings?.map((w: string, i: number) => <div key={i}>Aviso: {w}</div>)}
-            <div className="row end"><button className="btn primary" onClick={onClose}>Fechar</button></div>
-          </div>
-        )}
-      </JobState>
-    </Dialog>
-  );
-};
-
-const FramesDialog: React.FC<{ slug: string; ep: any; sel?: string; job: Job | null; onStart: (scene?: string) => void; onClose: () => void }> = ({ ep, sel, job, onStart, onClose }) => {
-  const [scope, setScope] = useState<string>("");
-  return (
-    <Dialog title="Folhas de revisão" onClose={onClose} wide>
-      <div className="row gap wrap">
-        <label className="field grow"><span>O que mostrar</span>
-          <select value={scope} onChange={(e) => setScope(e.target.value)} disabled={job?.status === "running"}>
-            <option value="">Episódio inteiro (2 quadros por cena)</option>
-            {ep.spec.beats.map((b: any) => <option key={b.id} value={b.id}>Só a cena {b.id}{b.id === sel ? " (selecionada)" : ""}</option>)}
-          </select>
-        </label>
-        <button className="btn primary" disabled={job?.status === "running"} onClick={() => onStart(scope || undefined)}>Gerar folhas</button>
+        </div>
+        {err && <div className="err">{err}</div>}
       </div>
-      <JobState job={job}>
-        {job?.status === "done" && (
-          <div className="sheets">
-            {job.result.sheets.map((u: string) => <a key={u} href={u} target="_blank" rel="noreferrer"><img src={u} alt="Folha de revisão" /></a>)}
-          </div>
-        )}
-      </JobState>
-      {!job && <p className="muted">As folhas são quadros de cada cena lado a lado, para conferir sem renderizar o vídeo.</p>}
-    </Dialog>
+    </div>
   );
 };
 
-const RenderDialog: React.FC<{ slug: string; ep: any; job: Job | null; stale: boolean; onStart: (force: boolean) => void; onClose: () => void }> = ({ slug, ep, job, stale, onStart, onClose }) => {
-  const [force, setForce] = useState(false);
-  const has = ep.files.video;
-  const url = job?.status === "done" ? job.result.video : has ? `/files/out/${slug}.mp4` : null;
-  const silent = ep.timing.provider === "none";
+/* ───────── voz ───────── */
+const VoiceDialog: React.FC<{ ep: any; scenes: any[]; onClose: () => void; onGo: (body: any) => void }> = ({ ep, scenes, onClose, onGo }) => {
+  const [bal, setBal] = useState<any>(undefined);
+  useEffect(() => {
+    api.get("/api/voice/balance").then((r) => setBal(r.balance)).catch(() => setBal(null));
+  }, []);
+  const fresh = scenes.filter((s) => s.voice !== "ok");
+  const chars = fresh.reduce((a, s) => a + plain(s.beat.narration).length, 0);
+  const left = bal ? bal.limit - bal.used : 0;
   return (
-    <Dialog title="Renderizar" onClose={onClose} wide>
-      {stale && <div className="alert alert-warn">A narração mudou depois da voz. O render recusa até a voz ser gerada de novo.</div>}
-      {silent && !stale && <div className="alert alert-info">A voz deste episódio é só tempos (provider none): o vídeo sai mudo.</div>}
-      <div className="row gap wrap">
-        <button className="btn primary" disabled={job?.status === "running"} onClick={() => onStart(force)}>{has ? "Renderizar de novo" : "Renderizar"}</button>
-        <label className="check"><input type="checkbox" checked={force} onChange={(e) => setForce(e.target.checked)} /> refazer todas as cenas (ignora o cache)</label>
-      </div>
-      <JobState job={job}>
-        {job?.status === "done" && <p className="ok">Pronto: {job.result.seconds}s, {job.result.rendered} cena(s) renderizada(s), {job.result.cached} do cache.{job.result.warnings?.map((w: string) => <span key={w}> {w}</span>)}</p>}
-      </JobState>
-      {url && job?.status !== "running" && <div className="videobox"><video key={url} src={url} controls playsInline /><a className="btn small" href={url} download>Baixar o vídeo</a></div>}
-      {!url && !job && <p className="muted">Ainda não há vídeo. O render só junta o que já tem voz; ele nunca gera voz.</p>}
-    </Dialog>
-  );
-};
-
-const PackDialog: React.FC<{ slug: string; ep: any; job: Job | null; onStart: () => void; onClose: () => void }> = ({ slug, ep, job, onStart, onClose }) => {
-  const files: { name: string; url: string }[] = job?.status === "done" ? job.result.files : ep.files.pack.map((n: string) => ({ name: n, url: `/files/out/${slug}/${encodeURIComponent(n)}` }));
-  const hasVideo = files.some((f) => f.name === "video.mp4");
-  return (
-    <Dialog title="Pacote de postagem" onClose={onClose} wide>
-      <p className="muted">O pacote reúne vídeo, legendas por plataforma e miniatura. A UI não publica nada: você posta (ou agenda) por fora.</p>
-      <button className="btn primary" disabled={job?.status === "running" || !ep.files.video} onClick={onStart}>{files.length ? "Gerar o pacote de novo" : "Gerar pacote"}</button>
-      {!ep.files.video && <p className="hint bad">Falta o vídeo: renderize primeiro.</p>}
-      <JobState job={job} />
-      {files.length > 0 && job?.status !== "running" && (
+    <Dialog
+      title="Gerar voz"
+      sub="Confira as falas. Gerar voz gasta créditos do ElevenLabs; falas já gravadas ou em cache não gastam."
+      onClose={onClose}
+      footer={
         <>
-          <h3>Arquivos (out/{slug}/)</h3>
-          <ul className="files">{files.map((f) => <li key={f.name}><a href={f.url} target="_blank" rel="noreferrer">{f.name}</a> <a className="muted" href={f.url} download>baixar</a></li>)}</ul>
-          {hasVideo && <div className="videobox"><video src={`/files/out/${slug}/video.mp4`} controls playsInline /></div>}
+          <span className="l">{fresh.length ? `${fresh.length} fala(s) nova(s), até ~${chars} caracteres` : "Todas as falas já têm voz."}</span>
+          <button className="btn" onClick={() => onGo({ provider: "none" })} title="Calcula os tempos sem gerar áudio. Não gasta nada.">Só tempos, sem custo</button>
+          <button className="btn gold" disabled={!bal || !fresh.length || chars > left} onClick={() => onGo({ confirm: true })}>Gerar voz</button>
         </>
-      )}
+      }
+    >
+      <div className="box">
+        {bal === undefined && <span className="spin" />}
+        {bal === null && <span>Sem chave de voz. Ponha <span className="mono">ELEVENLABS_API_KEY=…</span> no arquivo <span className="mono">.env.local</span> do espaço de trabalho e reinicie.</span>}
+        {bal && (
+          <>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <span>Plano <b>{bal.plan}</b></span>
+              <span className="mono">{left.toLocaleString("pt-BR")} caracteres livres</span>
+            </div>
+            <div className="meter">
+              <i style={{ width: `${(bal.used / bal.limit) * 100}%` }} />
+              <i style={{ width: `${Math.min(100, ((bal.used + chars) / bal.limit) * 100)}%`, opacity: 0.35 }} />
+            </div>
+            {bal.plan === "free" && <div className="mute" style={{ marginTop: 8, fontSize: 12.5 }}>O plano grátis do ElevenLabs não cobre uso comercial.</div>}
+          </>
+        )}
+      </div>
+      {scenes.map((s) => {
+        const w = who(s.beat.speaker);
+        return (
+          <div className="line" key={s.id} style={{ ["--c" as any]: w.c }}>
+            <span className="who">{s.beat.speaker ? (ep.spec.cast?.[s.beat.speaker]?.label ?? w.label) : w.label}</span>
+            <span><Rich text={s.beat.narration} /></span>
+            {s.voice === "ok" ? <span className="tag">já tem</span> : <span className="pill" style={{ ["--c" as any]: "var(--gold)", height: 22 }}>nova</span>}
+          </div>
+        );
+      })}
+    </Dialog>
+  );
+};
+
+/* ───────── folhas de revisão ───────── */
+const Sheets: React.FC<{ sheets: string[]; onClose: () => void; onRedo: () => void }> = ({ sheets, onClose, onRedo }) => {
+  const [zoom, setZoom] = useState<string | null>(null);
+  return (
+    <>
+      <Dialog wide title="Folhas de revisão" sub="Dois quadros por cena. Confira enquadramento, textos e inglês na tela. Clique para ampliar." onClose={onClose} footer={<><button className="btn" onClick={onRedo}>Gerar de novo</button><button className="btn gold" onClick={onClose}>Tudo certo</button></>}>
+        <div className="sheets">{sheets.map((s) => <img key={s} src={s} alt="Folha de revisão" onClick={() => setZoom(s)} />)}</div>
+      </Dialog>
+      {zoom && <div className="zoom" onClick={() => setZoom(null)}><img src={zoom} alt="" /></div>}
+    </>
+  );
+};
+
+/* ───────── pacote ───────── */
+const Pack: React.FC<{ slug: string; files: string[]; onClose: () => void }> = ({ slug, files, onClose }) => {
+  const plats = [["reels", "Reels"], ["tiktok", "TikTok"], ["shorts", "Shorts"]].filter(([k]) => files.includes(`${k}.txt`));
+  const [p, setP] = useState(plats[0]?.[0] ?? "reels");
+  const [txt, setTxt] = useState("");
+  const [copied, setCopied] = useState(false);
+  const url = (f: string) => `/files/out/${slug}/${encodeURIComponent(f)}`;
+  useEffect(() => {
+    setCopied(false);
+    fetch(url(`${p}.txt`)).then((r) => (r.ok ? r.text() : "")).then(setTxt);
+  }, [p]);
+  return (
+    <Dialog wide title="Pacote de postagem" sub="Nada é publicado daqui. Baixe o vídeo e copie a legenda de cada plataforma." onClose={onClose} footer={<a className="btn gold" href={url("video.mp4")} download={`${slug}.mp4`} style={{ textDecoration: "none" }}>↓ Baixar vídeo</a>}>
+      <div className="result">
+        <video src={url("video.mp4")} poster={files.includes("thumb.jpg") ? url("thumb.jpg") : undefined} controls />
+        <div>
+          <div className="plat">
+            {plats.map(([k, l]) => <button key={k} className={`tab${p === k ? " on" : ""}`} onClick={() => setP(k)}>{l}</button>)}
+            <button className="btn" style={{ marginLeft: "auto", height: 30 }} onClick={() => navigator.clipboard.writeText(txt).then(() => setCopied(true))}>{copied ? "✓ Copiado" : "Copiar"}</button>
+          </div>
+          <div className="cap">{txt}</div>
+          <div className="files">{files.map((f) => <a key={f} className="tag" href={url(f)} target="_blank" rel="noreferrer">{f}</a>)}</div>
+        </div>
+      </div>
     </Dialog>
   );
 };

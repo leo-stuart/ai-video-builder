@@ -1,203 +1,198 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { api, ApiError } from "./api";
+import { api } from "./api";
 import { Editor } from "./Editor";
+import { Bold, Dialog, STATUS, colorOf } from "./lib";
 
-export const STATUS: Record<string, string> = { draft: "rascunho", voiced: "com voz", rendered: "renderizado", packed: "empacotado" };
-export const Status: React.FC<{ s: string }> = ({ s }) => <span className={`chip st-${s}`}>{STATUS[s] ?? s}</span>;
+type Ep = { slug: string; title: string; format: string; freedom: string; status: string };
+type Pauta = { id: string; format: string; place: string; title: string; recommended?: boolean };
 
 const useHash = () => {
-  const [h, setH] = useState(location.hash || "#/");
+  const [h, setH] = useState(location.hash);
   useEffect(() => {
-    const f = () => setH(location.hash || "#/");
-    addEventListener("hashchange", f);
-    return () => removeEventListener("hashchange", f);
+    const f = () => setH(location.hash);
+    window.addEventListener("hashchange", f);
+    return () => window.removeEventListener("hashchange", f);
   }, []);
   return h;
 };
 
-export const ErrorBox: React.FC<{ error: { message: string; code?: string } | null; onRetry?: () => void }> = ({ error, onRetry }) =>
-  error ? (
-    <div className="alert alert-error" role="alert">
-      <div>{error.message}</div>
-      {onRetry && <button className="btn small" onClick={onRetry}>Tentar de novo</button>}
-    </div>
-  ) : null;
-
 export const App: React.FC = () => {
   const hash = useHash();
+  const slug = hash.startsWith("#/e/") ? decodeURIComponent(hash.slice(4)) : null;
+  return slug ? <Editor key={slug} slug={slug} onBack={() => (location.hash = "#/")} /> : <Home />;
+};
+
+const Home: React.FC = () => {
   const [ws, setWs] = useState<any>(null);
-  const [eps, setEps] = useState<any[] | null>(null);
-  const [error, setError] = useState<ApiError | null>(null);
+  const [eps, setEps] = useState<Ep[] | null>(null);
+  const [err, setErr] = useState<string | null>(null);
+  const [creating, setCreating] = useState(false);
 
-  const reload = useCallback(async () => {
-    try {
-      setError(null);
-      const [w, e] = await Promise.all([api.get("/api/workspace"), api.get("/api/episodes")]);
-      setWs(w);
-      setEps(e);
-    } catch (e: any) {
-      setError(e);
-    }
+  const load = useCallback(() => {
+    Promise.all([api.get("/api/workspace"), api.get<Ep[]>("/api/episodes")])
+      .then(([w, e]) => {
+        setWs(w);
+        setEps(e);
+      })
+      .catch((e) => setErr(e.message));
   }, []);
+  useEffect(load, [load]);
   useEffect(() => {
-    reload();
-  }, [reload]);
+    document.title = ws ? `${ws.brand.name} · Estúdio` : "Estúdio";
+  }, [ws]);
 
-  const m = hash.match(/^#\/ep\/([a-z0-9-]+)/);
-  const slug = m?.[1];
-  const isNew = hash.startsWith("#/new");
+  if (err) return <div className="center"><div className="err">{err}</div></div>;
+  if (!ws || !eps) return <div className="center"><span className="spin" /></div>;
+  const count = (s: string) => eps.filter((e) => e.status === s).length;
 
   return (
-    <div className="app">
-      <aside className="side">
-        <a className="brand" href="#/">
-          <span className="logo">▶</span>
-          <span>
-            <strong>{ws?.brand?.name || "Builder"}</strong>
-            <small>Builder de vídeos</small>
-          </span>
-        </a>
-        <a className="btn primary block" href="#/new">+ Novo episódio</a>
-        <nav className="eplist" aria-label="Episódios">
-          {eps === null && !error && <p className="muted pad">Carregando…</p>}
-          {eps?.length === 0 && <p className="muted pad">Nenhum episódio ainda.</p>}
-          {eps?.map((e) => (
-            <a key={e.slug} href={`#/ep/${e.slug}`} className={`epitem ${e.slug === slug ? "active" : ""}`}>
-              <span className="eptitle">{e.title}</span>
-              <span className="epmeta">
-                <code>{e.slug}</code>
-                <Status s={e.status} />
-              </span>
-            </a>
-          ))}
-        </nav>
-        <p className="wspath" title={ws?.path}>{ws?.path?.split("/").slice(-2).join("/")}</p>
-      </aside>
-      <main className="main">
-        {error && <div className="pad"><ErrorBox error={error} onRetry={reload} /></div>}
-        {!error && isNew && <NewEpisode eps={eps ?? []} ws={ws} onCreated={async (s) => { await reload(); location.hash = `#/ep/${s}`; }} />}
-        {!error && slug && <Editor key={slug} slug={slug} onChanged={reload} onDeleted={async () => { await reload(); location.hash = "#/"; }} />}
-        {!error && !isNew && !slug && <Home eps={eps} />}
-      </main>
+    <div className="home">
+      <div className="home-in">
+        <header className="hero">
+          <div>
+            <h1>
+              <small>Estúdio de vídeos</small>
+              {ws.brand.name}
+            </h1>
+            {ws.brand.tagline && (
+              <p>
+                <Bold text={ws.brand.tagline} />
+              </p>
+            )}
+          </div>
+          <button className="btn gold big" onClick={() => setCreating(true)}>
+            ＋ Novo vídeo
+          </button>
+        </header>
+
+        <div className="stats">
+          <div className="stat"><b>{eps.length}</b><span>vídeos</span></div>
+          <div className="stat"><b style={{ color: "var(--mint)" }}>{count("packed")}</b><span>prontos para postar</span></div>
+          <div className="stat"><b>{count("rendered") + count("voiced")}</b><span>em produção</span></div>
+          <div className="stat"><b>{count("draft")}</b><span>rascunhos</span></div>
+        </div>
+
+        <div className="grid">
+          <button className="poster new" onClick={() => setCreating(true)}>
+            <i>＋</i>
+            Novo vídeo
+          </button>
+          {[...eps].reverse().map((e, i) => {
+            const st = STATUS[e.status] ?? STATUS.draft;
+            const n = e.slug.match(/^ep(\d+)/)?.[1];
+            return (
+              <button key={e.slug} className="poster" style={{ ["--c" as any]: colorOf(e.format), animationDelay: `${i * 40}ms` }} onClick={() => (location.hash = `#/e/${e.slug}`)}>
+                {e.status === "packed" && <img src={`/files/out/${e.slug}/thumb.jpg`} alt="" loading="lazy" onError={(ev) => (ev.currentTarget.style.display = "none")} />}
+                {n && <span className="num">{n}</span>}
+                <span className="pill st" style={{ ["--c" as any]: st.c }}>
+                  <span className="dot" style={{ ["--c" as any]: st.c }} />
+                  {st.label}
+                </span>
+                <h3>{e.title}</h3>
+                <div className="meta">{e.format} · {e.freedom}</div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+      {creating && <NewVideo eps={eps} defaultFreedom={ws.freedom} onClose={() => setCreating(false)} />}
     </div>
   );
 };
 
-const Home: React.FC<{ eps: any[] | null }> = ({ eps }) => (
-  <div className="page">
-    <h1>Episódios</h1>
-    {eps === null && <p className="muted">Carregando…</p>}
-    {eps?.length === 0 && (
-      <div className="empty">
-        <h2>Este espaço de trabalho ainda não tem episódios</h2>
-        <p>Escolha uma pauta e crie o primeiro episódio. O roteiro já vem montado; você só ajusta as falas.</p>
-        <a className="btn primary" href="#/new">Criar o primeiro episódio</a>
-      </div>
-    )}
-    <div className="cards">
-      {eps?.map((e) => (
-        <a key={e.slug} className="card" href={`#/ep/${e.slug}`}>
-          <div className="row between"><code>{e.slug}</code><Status s={e.status} /></div>
-          <h3>{e.title}</h3>
-          <p className="muted">formato {e.format ?? "-"} · liberdade {e.freedom}</p>
-        </a>
-      ))}
-    </div>
-  </div>
-);
-
-const FREEDOM = [
-  ["", "Padrão do espaço de trabalho"],
-  ["recipe", "recipe: só trocar falas e textos"],
-  ["guided", "guided: também inserir, mover e trocar cenas"],
-  ["free", "free: cenas montadas em dados"],
-];
-
-const nextSlug = (eps: any[], pautaId: string) => {
-  const n = eps.reduce((mx, e) => Math.max(mx, Number(e.slug.match(/^ep(\d+)-/)?.[1] ?? 0)), 0) + 1;
-  return `ep${String(n).padStart(2, "0")}-${pautaId}`.slice(0, 48);
-};
-
-const NewEpisode: React.FC<{ eps: any[]; ws: any; onCreated: (slug: string) => void }> = ({ eps, ws, onCreated }) => {
-  const [pautas, setPautas] = useState<any[] | null>(null);
-  const [pick, setPick] = useState<string>("");
+const NewVideo: React.FC<{ eps: Ep[]; defaultFreedom: string; onClose: () => void }> = ({ eps, onClose }) => {
+  const [pautas, setPautas] = useState<Pauta[] | null>(null);
+  const [formats, setFormats] = useState<any[]>([]);
+  const [pick, setPick] = useState<Pauta | null>(null);
+  const [freedom, setFreedom] = useState("recipe");
   const [slug, setSlug] = useState("");
-  const [touched, setTouched] = useState(false);
-  const [freedom, setFreedom] = useState("");
-  const [err, setErr] = useState<any>(null);
   const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
 
+  const next = useMemo(() => String(Math.max(0, ...eps.map((e) => Number(e.slug.match(/^ep(\d+)/)?.[1] ?? 0))) + 1).padStart(2, "0"), [eps]);
   useEffect(() => {
-    api.get("/api/pautas").then((p) => {
-      setPautas(p);
-      const r = p.find((x: any) => x.recommended) ?? p[0];
-      if (r) setPick(r.id);
-    }).catch(setErr);
+    Promise.all([api.get<Pauta[]>("/api/pautas"), api.get<any[]>("/api/formats")])
+      .then(([p, f]) => {
+        setPautas(p);
+        setFormats(f);
+        const rec = p.find((x) => x.recommended) ?? p[0];
+        if (rec) choose(rec);
+      })
+      .catch((e) => setErr(e.message));
   }, []);
-  useEffect(() => {
-    if (!touched && pick) setSlug(nextSlug(eps, pick));
-  }, [pick, eps, touched]);
-
-  const chosen = useMemo(() => pautas?.find((p) => p.id === pick), [pautas, pick]);
-  const valid = /^ep\d\d-[a-z0-9-]+$/.test(slug);
-
+  const choose = (p: Pauta) => {
+    setPick(p);
+    setSlug(`ep${next}-${p.id}`);
+  };
   const create = async () => {
+    if (!pick) return;
     setBusy(true);
     setErr(null);
     try {
-      const r = await api.post("/api/episodes", { slug, pauta: pick, freedom: freedom || undefined });
-      onCreated(r.slug);
-    } catch (e) {
-      setErr(e);
+      const r = await api.post("/api/episodes", { slug, pauta: pick.id, freedom });
+      location.hash = `#/e/${r.slug}`;
+    } catch (e: any) {
+      setErr(e.message);
       setBusy(false);
     }
   };
+  const groups = useMemo(() => {
+    const g: Record<string, Pauta[]> = {};
+    (pautas ?? []).forEach((p) => (g[p.format] ??= []).push(p));
+    return Object.entries(g);
+  }, [pautas]);
 
   return (
-    <div className="page narrow">
-      <h1>Novo episódio</h1>
-      <ErrorBox error={err} />
-      {pautas === null && !err && <p className="muted">Carregando pautas…</p>}
-      {pautas?.length === 0 && (
-        <div className="empty">
-          <h2>Não há pautas livres</h2>
-          <p>Todas as pautas do playbook já foram usadas, ou o espaço de trabalho não tem pautas em <code>playbook/pautas/</code>. Crie o episódio pela linha de comando com <code>vid new</code>.</p>
-        </div>
-      )}
-      {!!pautas?.length && (
+    <Dialog
+      wide
+      title="Novo vídeo"
+      sub="Escolha uma pauta pronta. O lugar, o elenco e a câmera são sorteados para não repetir os últimos vídeos."
+      onClose={onClose}
+      footer={
         <>
-          <h2>1. Pauta</h2>
-          <div className="pautas" role="radiogroup" aria-label="Pautas">
-            {pautas.map((p) => (
-              <label key={p.id} className={`pauta ${pick === p.id ? "on" : ""}`}>
-                <input type="radio" name="pauta" checked={pick === p.id} onChange={() => setPick(p.id)} />
-                <span>
-                  <strong>{p.title}</strong>
-                  {p.recommended && <span className="chip st-rendered">recomendada</span>}
-                  <small>{p.id} · formato {p.format} · lugar {p.place}</small>
-                </span>
-              </label>
-            ))}
+          <div className="l" style={{ display: "flex", gap: 10, alignItems: "center" }}>
+            <input className="in mono" style={{ width: 250 }} value={slug} onChange={(e) => setSlug(e.target.value)} aria-label="Identificador" />
+            <div className="chips">
+              {["recipe", "guided"].map((f) => (
+                <button key={f} className={`chip${freedom === f ? " on" : ""}`} onClick={() => setFreedom(f)} title={f === "recipe" ? "Segue o formato; só textos mudam" : "Permite reordenar e trocar cenas"}>
+                  {f}
+                </button>
+              ))}
+            </div>
           </div>
-          <h2>2. Nome do episódio</h2>
-          <label className="field">
-            <span>Slug (epNN-tema)</span>
-            <input value={slug} onChange={(e) => { setSlug(e.target.value.toLowerCase()); setTouched(true); }} spellCheck={false} />
-            {!valid && <em className="hint bad">Use o padrão epNN-tema, só letras minúsculas, números e hífen.</em>}
-            {eps.some((e) => e.slug === slug) && <em className="hint bad">Já existe um episódio com esse nome.</em>}
-          </label>
-          <label className="field">
-            <span>Nível de liberdade</span>
-            <select value={freedom} onChange={(e) => setFreedom(e.target.value)}>
-              {FREEDOM.map(([v, t]) => <option key={v} value={v}>{t}{v === "" && ws?.freedom ? ` (${ws.freedom})` : ""}</option>)}
-            </select>
-          </label>
-          <div className="row gap">
-            <button className="btn primary" disabled={!valid || busy || eps.some((e) => e.slug === slug)} onClick={create}>{busy ? "Criando…" : `Criar e abrir${chosen ? `: ${chosen.title}` : ""}`}</button>
-            <a className="btn" href="#/">Cancelar</a>
-          </div>
+          <button className="btn ghost" onClick={onClose}>Cancelar</button>
+          <button className="btn gold" disabled={!pick || busy || !slug} onClick={create}>
+            {busy && <span className="spin" />}Criar vídeo
+          </button>
         </>
-      )}
-    </div>
+      }
+    >
+      {err && <div className="err" style={{ marginBottom: 12 }}>{err}</div>}
+      {!pautas && !err && <div style={{ padding: 30, textAlign: "center" }}><span className="spin" /></div>}
+      {pautas && !pautas.length && <div className="allgood">Nenhuma pauta pronta sobrando neste espaço de trabalho.</div>}
+      {groups.map(([fmt, list]) => {
+        const f = formats.find((x) => x.id === fmt);
+        return (
+          <section key={fmt}>
+            <div className="fmt-h">
+              <span className="dot" style={{ ["--c" as any]: colorOf(fmt) }} />
+              <h3>{f?.title ?? fmt}</h3>
+              <span>{f?.desc}</span>
+            </div>
+            <div className="pautas">
+              {list.map((p) => (
+                <button key={p.id} className={`pauta${pick?.id === p.id ? " on" : ""}`} onClick={() => choose(p)}>
+                  <b>{p.title}</b>
+                  <span style={{ display: "flex", gap: 6 }}>
+                    <span className="tag">{p.place}</span>
+                    {p.recommended && <span className="pill" style={{ ["--c" as any]: "var(--gold)", height: 22 }}>recomendada</span>}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </section>
+        );
+      })}
+    </Dialog>
   );
 };
