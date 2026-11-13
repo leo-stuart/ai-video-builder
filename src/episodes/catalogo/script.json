@@ -1,0 +1,173 @@
+{
+ "slug": "catalogo",
+ "title": "Catálogo de cenários e câmeras (não é para publicar)",
+ "captions": {
+  "y": 1500,
+  "size": 56
+ },
+ "scenes": [
+  {
+   "id": "pcafe",
+   "narration": "Counter place cafe",
+   "hold": 0.4
+  },
+  {
+   "id": "prestaurante",
+   "narration": "Counter place restaurante",
+   "hold": 0.4
+  },
+  {
+   "id": "photel",
+   "narration": "Counter place hotel",
+   "hold": 0.4
+  },
+  {
+   "id": "pimigracao",
+   "narration": "Counter place imigracao",
+   "hold": 0.4
+  },
+  {
+   "id": "paeroporto",
+   "narration": "Counter place aeroporto",
+   "hold": 0.4
+  },
+  {
+   "id": "ploja",
+   "narration": "Counter place loja",
+   "hold": 0.4
+  },
+  {
+   "id": "pfarmacia",
+   "narration": "Counter place farmacia",
+   "hold": 0.4
+  },
+  {
+   "id": "cwide",
+   "narration": "SHOT counter wide",
+   "hold": 0.4
+  },
+  {
+   "id": "conother",
+   "narration": "SHOT counter onOther",
+   "hold": 0.4
+  },
+  {
+   "id": "conme",
+   "narration": "SHOT counter onMe",
+   "hold": 0.4
+  },
+  {
+   "id": "clowme",
+   "narration": "SHOT counter lowMe",
+   "hold": 0.4
+  },
+  {
+   "id": "cqueue",
+   "narration": "SHOT counter queue",
+   "hold": 0.4
+  },
+  {
+   "id": "cqueuefar",
+   "narration": "SHOT counter queueFar",
+   "hold": 0.4
+  },
+  {
+   "id": "sestablish",
+   "narration": "SHOT street establish",
+   "hold": 0.4
+  },
+  {
+   "id": "sonme",
+   "narration": "SHOT street onMe",
+   "hold": 0.4
+  },
+  {
+   "id": "sdoor",
+   "narration": "SHOT street door",
+   "hold": 0.4
+  },
+  {
+   "id": "swalk",
+   "narration": "SHOT street walk",
+   "hold": 0.4
+  },
+  {
+   "id": "sdia",
+   "narration": "Street night false",
+   "hold": 0.4
+  },
+  {
+   "id": "hwide",
+   "narration": "SHOT home wide",
+   "hold": 0.4
+  },
+  {
+   "id": "honbot",
+   "narration": "SHOT home onBot",
+   "hold": 0.4
+  },
+  {
+   "id": "honme",
+   "narration": "SHOT home onMe",
+   "hold": 0.4
+  },
+  {
+   "id": "hboth",
+   "narration": "SHOT home both",
+   "hold": 0.4
+  },
+  {
+   "id": "hfloor",
+   "narration": "SHOT home floor",
+   "hold": 0.4
+  },
+  {
+   "id": "eestablish",
+   "narration": "SHOT school establish",
+   "hold": 0.4
+  },
+  {
+   "id": "eonme",
+   "narration": "SHOT school onMe",
+   "hold": 0.4
+  },
+  {
+   "id": "twide",
+   "narration": "SHOT studio wide Scale",
+   "hold": 0.4
+  },
+  {
+   "id": "tside",
+   "narration": "SHOT studio side Bars",
+   "hold": 0.4
+  },
+  {
+   "id": "tclose",
+   "narration": "SHOT studio close Guy",
+   "hold": 0.4
+  },
+  {
+   "id": "gice",
+   "narration": "Ice e Verdict",
+   "hold": 0.4
+  },
+  {
+   "id": "gburst",
+   "narration": "Burst e Stamp",
+   "hold": 0.4
+  },
+  {
+   "id": "gpile",
+   "narration": "Pile e Pin",
+   "hold": 0.4
+  },
+  {
+   "id": "rbarras",
+   "narration": "O problema não é o seu inglês. É que você nunca *falou* ele em voz alta."
+  },
+  {
+   "id": "rpilha",
+   "narration": "O problema não é o seu inglês. É que você nunca *falou* ele em voz alta."
+  }
+ ]
+}

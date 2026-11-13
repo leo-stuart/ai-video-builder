@@ -1,0 +1,221 @@
+{
+  "hook-walk-out": {
+    "desc": "Gancho: \"você\" sai do curso com o diploma; corte na palavra forte. Cartão com o número.",
+    "needs": [
+      "plate"
+    ],
+    "optional": [
+      "pin",
+      "sign",
+      "cueWord"
+    ]
+  },
+  "arrive-need": {
+    "desc": "Chegada a uma cidade, de noite, com uma necessidade no corpo (fome, atraso, frio, cansaço).",
+    "needs": [
+      "city"
+    ],
+    "optional": [
+      "need",
+      "pose",
+      "cueWord"
+    ]
+  },
+  "ask": {
+    "desc": "Quem atende faz a pergunta em inglês no balcão (plano geral e corte para o rosto).",
+    "needs": [],
+    "optional": [
+      "close",
+      "meMood"
+    ]
+  },
+  "freeze": {
+    "desc": "O branco ao pé da letra: um bloco de gelo cresce em volta de \"você\".",
+    "needs": [],
+    "optional": [
+      "label",
+      "cueWord"
+    ]
+  },
+  "line-me": {
+    "desc": "Fala de \"você\" no balcão, já congelado. Com X.",
+    "needs": [],
+    "optional": [
+      "ice",
+      "mood"
+    ]
+  },
+  "line-other": {
+    "desc": "Fala de quem atende, com reação (bravo ou feliz).",
+    "needs": [],
+    "optional": [
+      "ice",
+      "mood",
+      "meMood"
+    ]
+  },
+  "crowd": {
+    "desc": "A fila cresce de um em um; depois quem atende desiste.",
+    "needs": [],
+    "optional": [
+      "cueWord"
+    ]
+  },
+  "walk-out-street": {
+    "desc": "O prejuízo: de volta à rua, de mãos vazias, com o número em um cartão.",
+    "needs": [
+      "loss"
+    ],
+    "optional": [
+      "cueWord",
+      "lean"
+    ]
+  },
+  "metaphor": {
+    "desc": "A causa como objeto 3D: balança, barras ou pilha (o tipo vem do mundo do episódio).",
+    "needs": [
+      "heavy",
+      "light"
+    ],
+    "optional": [
+      "kind",
+      "cueA",
+      "cueMid",
+      "cueB"
+    ]
+  },
+  "app-enter": {
+    "desc": "O app entra: em casa, o tutor de IA sai do celular na palavra Pragma.",
+    "needs": [],
+    "optional": [
+      "cueWord"
+    ]
+  },
+  "tutor-line": {
+    "desc": "Fala do tutor. Com plate, a resposta certa aparece grande.",
+    "needs": [],
+    "optional": [
+      "plate",
+      "plateCue"
+    ]
+  },
+  "user-error": {
+    "desc": "O erro de \"você\" no treino; no fim da fala, X e o que a frase quis dizer.",
+    "needs": [
+      "meaning"
+    ],
+    "optional": []
+  },
+  "user-success": {
+    "desc": "O acerto de \"você\": certo, pulo, estilhaços e carimbo.",
+    "needs": [],
+    "optional": [
+      "stamp"
+    ]
+  },
+  "pitch-habit": {
+    "desc": "O pitch: sete dias acendem; corte para casa com a tela real do app.",
+    "needs": [],
+    "optional": [
+      "cueWord",
+      "plateText",
+      "plateSmall"
+    ]
+  },
+  "walk-street": {
+    "desc": "De volta ao lugar, de dia, andando firme.",
+    "needs": [],
+    "optional": [
+      "pin"
+    ]
+  },
+  "win": {
+    "desc": "A vitória no balcão: o objeto vem, estilhaços e carimbo.",
+    "needs": [],
+    "optional": [
+      "stamp"
+    ]
+  },
+  "end-card": {
+    "desc": "Tela final: marca e Link na bio. Sempre a última cena.",
+    "needs": [],
+    "optional": []
+  },
+  "title-card": {
+    "desc": "Abertura: \"você\" fala com a câmera; um cartão grande dourado entra na palavra forte.",
+    "needs": [
+      "card"
+    ],
+    "optional": [
+      "cueWord",
+      "tone"
+    ]
+  },
+  "statement": {
+    "desc": "Cartão de afirmação (mito em vermelho ou fato em verde) com carimbo e \"você\" reagindo.",
+    "needs": [
+      "card"
+    ],
+    "optional": [
+      "good",
+      "stamp",
+      "mood",
+      "size",
+      "tone"
+    ]
+  },
+  "say-me": {
+    "desc": "\"Você\" diz a frase (errada) para quem atende, sem gelo.",
+    "needs": [],
+    "optional": [
+      "label",
+      "mood"
+    ]
+  },
+  "heard": {
+    "desc": "O que quem atende ouviu: susto, X e o sentido da frase em um cartão vermelho.",
+    "needs": [
+      "meaning"
+    ],
+    "optional": [
+      "label",
+      "cueWord"
+    ]
+  },
+  "compare": {
+    "desc": "Errado e certo lado a lado com X e certo; a palavra depois dos dois-pontos dispara o certo.",
+    "needs": [
+      "wrong",
+      "right"
+    ],
+    "optional": [
+      "cueWord"
+    ]
+  },
+  "quiz-question": {
+    "desc": "Quiz: três opções entram uma a uma, contagem regressiva, \"você\" suando.",
+    "needs": [
+      "optA",
+      "optB",
+      "optC"
+    ],
+    "optional": []
+  },
+  "quiz-answer": {
+    "desc": "Resposta do quiz: a certa fica verde, as outras apagam, com certo e pulo.",
+    "needs": [
+      "optA",
+      "optB",
+      "optC",
+      "correct"
+    ],
+    "optional": [
+      "cueWord"
+    ]
+  },
+  "scene-data": {
+    "desc": "Cena escrita inteira em dados (JSON). Use `vid scene <slug> scene <id> --json …` para preenchê-la. Só nos níveis guided e free.",
+    "needs": [],
+    "optional": []
+  }
+}

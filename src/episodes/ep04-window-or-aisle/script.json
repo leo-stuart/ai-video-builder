@@ -1,0 +1,146 @@
+{
+  "slug": "ep04-window-or-aisle",
+  "series": "Inglês sem travar",
+  "number": 4,
+  "title": "Window or aisle?",
+  "eleven": "TX3LPaxmHKxFdv7VOQHJ",
+  "captions": {
+    "y": 1290,
+    "size": 84
+  },
+  "post": {
+    "caption": "Duzentos verbos decorados. Aí perguntam \"Window or aisle?\" e você trava.\n\nÉ só \"janela ou corredor?\". Resposta: \"Aisle, please.\"\n\nQual frase já te congelou lá fora? Conta aqui 👇",
+    "hashtags": [
+      "ingles",
+      "aprenderingles",
+      "dicasdeingles",
+      "inglesparaviagem",
+      "falaringles",
+      "pragma"
+    ]
+  },
+  "cast": {
+    "voce": {
+      "label": "Você",
+      "color": "gold",
+      "eleven": "bIHbv24MWmeRgasZH58o",
+      "say": {
+        "pt": "Luciana",
+        "en": "Luciana"
+      }
+    },
+    "caixa": {
+      "label": "Caixa",
+      "color": "coral",
+      "eleven": "cgSgspJ2msm6clMCkdW9",
+      "say": {
+        "en": "Samantha"
+      }
+    },
+    "tutor": {
+      "label": "Tutor de IA",
+      "color": "indigo",
+      "eleven": "XrExE9yKIg1WjnnlVkGX",
+      "say": {
+        "en": "Daniel"
+      }
+    }
+  },
+  "scenes": [
+    {
+      "id": "curso",
+      "narration": "Você decorou *duzentos* verbos irregulares."
+    },
+    {
+      "id": "ny",
+      "narration": "Aí chega no *aeroporto*, atrasado."
+    },
+    {
+      "id": "pergunta",
+      "speaker": "caixa",
+      "narration": "[en]Hi! Window or aisle?[/en]"
+    },
+    {
+      "id": "trava",
+      "narration": "E você… *trava*.",
+      "hold": 0.4
+    },
+    {
+      "id": "yes",
+      "speaker": "voce",
+      "narration": "[en]Uh… yes?[/en]",
+      "hold": 0.3
+    },
+    {
+      "id": "what",
+      "speaker": "caixa",
+      "narration": "[en]Yes… what?[/en]",
+      "hold": 0.2
+    },
+    {
+      "id": "fila",
+      "narration": "A fila cresce. Ninguém entende nada."
+    },
+    {
+      "id": "fora",
+      "narration": "E você fica *sem voo*."
+    },
+    {
+      "id": "balanca",
+      "narration": "O problema não é o seu inglês. É que você nunca *falou* ele em voz alta."
+    },
+    {
+      "id": "pragma",
+      "narration": "Então você abre o *Pragma*."
+    },
+    {
+      "id": "treino",
+      "speaker": "tutor",
+      "sub": "Janela ou corredor?",
+      "narration": "[en]Window or aisle?[/en]"
+    },
+    {
+      "id": "erro",
+      "speaker": "voce",
+      "narration": "[en]Corridor, please.[/en]",
+      "hold": 0.5
+    },
+    {
+      "id": "corrige",
+      "speaker": "tutor",
+      "sub": "Quase! Diga: \"corredor, por favor\".",
+      "narration": "[en]Almost! Say: aisle, please.[/en]"
+    },
+    {
+      "id": "certo",
+      "speaker": "voce",
+      "narration": "[en]Aisle, please.[/en]",
+      "hold": 0.6
+    },
+    {
+      "id": "habito",
+      "narration": "Cinco minutos por dia, com um tutor de inteligência artificial que corrige *na hora*."
+    },
+    {
+      "id": "volta",
+      "narration": "Aí você volta lá."
+    },
+    {
+      "id": "revanche",
+      "speaker": "caixa",
+      "narration": "[en]Window or aisle?[/en]"
+    },
+    {
+      "id": "resposta",
+      "speaker": "voce",
+      "narration": "[en]Aisle, please![/en]",
+      "hold": 1
+    },
+    {
+      "id": "fim",
+      "narration": "Pragma. Link na bio.",
+      "captions": false,
+      "hold": 1.6
+    }
+  ]
+}

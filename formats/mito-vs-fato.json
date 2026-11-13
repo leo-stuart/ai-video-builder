@@ -1,0 +1,120 @@
+{
+  "id": "mito-vs-fato",
+  "title": "Mito vs fato",
+  "desc": "Uma crença comum sobre falar inglês é desmentida em um cartão, mostrada no balcão e treinada com o tutor. 11 cenas, cerca de 35 s.",
+  "slots": [
+    {
+      "key": "myth",
+      "ask": "O mito, em narração, começando com \"Mito:\" e com *ênfase*.",
+      "example": "Mito: dizer *I'm fine, thank you, and you?* é o jeito natural."
+    },
+    {
+      "key": "mythCard",
+      "ask": "O mito para o cartão (até 60 caracteres).",
+      "example": "\"I'm fine, thank you, and you?\" é natural"
+    },
+    {
+      "key": "fact",
+      "ask": "O fato, em narração, começando com \"Fato:\" e com *ênfase*.",
+      "example": "Fato: quase ninguém *responde* assim no dia a dia."
+    },
+    {
+      "key": "factCard",
+      "ask": "O fato para o cartão (até 60 caracteres).",
+      "example": "Nativos dizem \"Good, you?\""
+    },
+    {
+      "key": "question",
+      "ask": "A pergunta de quem atende, em inglês.",
+      "example": "How are you?"
+    },
+    {
+      "key": "right",
+      "ask": "A resposta certa em inglês, curta.",
+      "example": "Good, you?"
+    },
+    {
+      "key": "rightPt",
+      "ask": "A resposta certa em português.",
+      "example": "bem, e você?"
+    }
+  ],
+  "post": {
+    "caption": "Mito: {{mythCard}}.\nFato: {{factCard}}.\n\nResposta: \"{{right}}\" ({{rightPt}}).\n\nQual frase já te congelou lá fora? Conta aqui 👇",
+    "shortsTitle": "Mito ou fato: {{factCard}}"
+  },
+  "beats": [
+    {
+      "id": "mito",
+      "type": "statement",
+      "narration": "{{myth}}",
+      "params": {
+        "card": "{{mythCard}}",
+        "good": false
+      }
+    },
+    {
+      "id": "fato",
+      "type": "statement",
+      "narration": "{{fact}}",
+      "params": {
+        "card": "{{factCard}}",
+        "good": true
+      }
+    },
+    {
+      "id": "pergunta",
+      "type": "ask",
+      "speaker": "atendente",
+      "narration": "[en]{{question}}[/en]"
+    },
+    {
+      "id": "resposta",
+      "type": "win",
+      "speaker": "voce",
+      "narration": "[en]{{rightBang}}[/en]",
+      "hold": 1.0,
+      "params": {
+        "stamp": "Natural"
+      }
+    },
+    {
+      "id": "pragma",
+      "type": "app-enter",
+      "narration": "{{pool:abre}}"
+    },
+    {
+      "id": "treino",
+      "type": "tutor-line",
+      "speaker": "tutor",
+      "sub": "Diga: \"{{rightPt}}\".",
+      "narration": "[en]Say: {{right}}[/en]",
+      "params": {
+        "plate": "{{right}}"
+      }
+    },
+    {
+      "id": "certo",
+      "type": "user-success",
+      "speaker": "voce",
+      "narration": "[en]{{right}}[/en]",
+      "hold": 0.6
+    },
+    {
+      "id": "habito",
+      "type": "pitch-habit",
+      "narration": "{{pool:habito}}"
+    },
+    {
+      "id": "fim",
+      "type": "end-card",
+      "narration": "{{pool:fim}}",
+      "captions": false,
+      "hold": 1.6
+    }
+  ],
+  "target": [
+    25,
+    40
+  ]
+}

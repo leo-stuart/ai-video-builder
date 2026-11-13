@@ -1,0 +1,541 @@
+{
+  "provider": "elevenlabs",
+  "scenes": {
+    "pergunta": {
+      "hash": "eb65a950c9df",
+      "dur": 2.045,
+      "audio": "audio/ep02-for-here-or-to-go/pergunta.wav",
+      "words": [
+        {
+          "t": "Hi",
+          "en": true,
+          "s": 0,
+          "e": 0.163
+        },
+        {
+          "t": "there!",
+          "en": true,
+          "s": 0.221,
+          "e": 0.522
+        },
+        {
+          "t": "For",
+          "en": true,
+          "s": 0.592,
+          "e": 0.743
+        },
+        {
+          "t": "here",
+          "en": true,
+          "s": 0.789,
+          "e": 0.929
+        },
+        {
+          "t": "or",
+          "en": true,
+          "s": 0.952,
+          "e": 1.01
+        },
+        {
+          "t": "to",
+          "en": true,
+          "s": 1.057,
+          "e": 1.115
+        },
+        {
+          "t": "go?",
+          "en": true,
+          "s": 1.161,
+          "e": 1.765
+        }
+      ]
+    },
+    "branco": {
+      "hash": "ca64ddf1048d",
+      "dur": 1.487,
+      "audio": "audio/ep02-for-here-or-to-go/branco.wav",
+      "words": [
+        {
+          "t": "Uh…",
+          "en": true,
+          "s": 0,
+          "e": 0.348
+        },
+        {
+          "t": "yes?",
+          "en": true,
+          "s": 0.627,
+          "e": 1.207
+        }
+      ]
+    },
+    "yeswhat": {
+      "hash": "50b100685125",
+      "dur": 1.302,
+      "audio": "audio/ep02-for-here-or-to-go/yeswhat.wav",
+      "words": [
+        {
+          "t": "Yes…",
+          "en": true,
+          "s": 0,
+          "e": 0.383
+        },
+        {
+          "t": "what?",
+          "en": true,
+          "s": 0.453,
+          "e": 1.022
+        }
+      ]
+    },
+    "camera": {
+      "hash": "6fae3622972f",
+      "dur": 3.995,
+      "audio": "audio/ep02-for-here-or-to-go/camera.wav",
+      "words": [
+        {
+          "t": "Eu",
+          "s": 0,
+          "e": 0.151
+        },
+        {
+          "t": "sabia",
+          "em": true,
+          "s": 0.197,
+          "e": 0.464
+        },
+        {
+          "t": "responder.",
+          "s": 0.499,
+          "e": 1.091
+        },
+        {
+          "t": "Só",
+          "s": 1.416,
+          "e": 1.567
+        },
+        {
+          "t": "nunca",
+          "s": 1.625,
+          "e": 1.869
+        },
+        {
+          "t": "tinha",
+          "s": 1.904,
+          "e": 2.09
+        },
+        {
+          "t": "falado",
+          "s": 2.136,
+          "e": 2.485
+        },
+        {
+          "t": "isso",
+          "s": 2.531,
+          "e": 2.682
+        },
+        {
+          "t": "em",
+          "s": 2.705,
+          "e": 2.752
+        },
+        {
+          "t": "voz",
+          "em": true,
+          "s": 2.81,
+          "e": 3.03
+        },
+        {
+          "t": "alta.",
+          "em": true,
+          "s": 3.123,
+          "e": 3.715
+        }
+      ]
+    },
+    "treino": {
+      "hash": "f04eaf2781ed",
+      "dur": 2.695,
+      "audio": "audio/ep02-for-here-or-to-go/treino.wav",
+      "words": [
+        {
+          "t": "Let's",
+          "en": true,
+          "s": 0,
+          "e": 0.255
+        },
+        {
+          "t": "practice.",
+          "en": true,
+          "s": 0.302,
+          "e": 0.917
+        },
+        {
+          "t": "For",
+          "en": true,
+          "s": 1.068,
+          "e": 1.219
+        },
+        {
+          "t": "here",
+          "en": true,
+          "s": 1.289,
+          "e": 1.521
+        },
+        {
+          "t": "or",
+          "en": true,
+          "s": 1.579,
+          "e": 1.695
+        },
+        {
+          "t": "to",
+          "en": true,
+          "s": 1.753,
+          "e": 1.811
+        },
+        {
+          "t": "go?",
+          "en": true,
+          "s": 1.858,
+          "e": 2.415
+        }
+      ]
+    },
+    "erro": {
+      "hash": "062211217434",
+      "dur": 1.255,
+      "audio": "audio/ep02-for-here-or-to-go/erro.wav",
+      "words": [
+        {
+          "t": "I",
+          "en": true,
+          "s": 0,
+          "e": 0.081
+        },
+        {
+          "t": "want",
+          "en": true,
+          "s": 0.151,
+          "e": 0.313
+        },
+        {
+          "t": "to",
+          "en": true,
+          "s": 0.36,
+          "e": 0.418
+        },
+        {
+          "t": "go.",
+          "en": true,
+          "s": 0.476,
+          "e": 0.975
+        }
+      ]
+    },
+    "corrige": {
+      "hash": "1a811e0092a8",
+      "dur": 2.509,
+      "audio": "audio/ep02-for-here-or-to-go/corrige.wav",
+      "words": [
+        {
+          "t": "Almost!",
+          "en": true,
+          "s": 0,
+          "e": 0.673
+        },
+        {
+          "t": "Just",
+          "en": true,
+          "s": 0.789,
+          "e": 0.964
+        },
+        {
+          "t": "say:",
+          "en": true,
+          "s": 0.987,
+          "e": 1.126
+        },
+        {
+          "t": "to",
+          "en": true,
+          "s": 1.149,
+          "e": 1.196
+        },
+        {
+          "t": "go,",
+          "en": true,
+          "s": 1.242,
+          "e": 1.451
+        },
+        {
+          "t": "please.",
+          "en": true,
+          "s": 1.486,
+          "e": 2.229
+        }
+      ]
+    },
+    "certo": {
+      "hash": "a329dd3c2568",
+      "dur": 1.348,
+      "audio": "audio/ep02-for-here-or-to-go/certo.wav",
+      "words": [
+        {
+          "t": "To",
+          "en": true,
+          "s": 0,
+          "e": 0.151
+        },
+        {
+          "t": "go,",
+          "en": true,
+          "s": 0.197,
+          "e": 0.395
+        },
+        {
+          "t": "please.",
+          "en": true,
+          "s": 0.418,
+          "e": 1.068
+        }
+      ]
+    },
+    "volta": {
+      "hash": "865b673a00f8",
+      "dur": 1.534,
+      "audio": "audio/ep02-for-here-or-to-go/volta.wav",
+      "words": [
+        {
+          "t": "For",
+          "en": true,
+          "s": 0,
+          "e": 0.186
+        },
+        {
+          "t": "here",
+          "en": true,
+          "s": 0.244,
+          "e": 0.406
+        },
+        {
+          "t": "or",
+          "en": true,
+          "s": 0.441,
+          "e": 0.499
+        },
+        {
+          "t": "to",
+          "en": true,
+          "s": 0.546,
+          "e": 0.604
+        },
+        {
+          "t": "go?",
+          "en": true,
+          "s": 0.662,
+          "e": 1.254
+        }
+      ]
+    },
+    "resposta": {
+      "hash": "a6f692c6b087",
+      "dur": 1.441,
+      "audio": "audio/ep02-for-here-or-to-go/resposta.wav",
+      "words": [
+        {
+          "t": "To",
+          "en": true,
+          "s": 0,
+          "e": 0.151
+        },
+        {
+          "t": "go,",
+          "en": true,
+          "s": 0.221,
+          "e": 0.43
+        },
+        {
+          "t": "please!",
+          "en": true,
+          "s": 0.464,
+          "e": 1.161
+        }
+      ]
+    },
+    "pitch": {
+      "hash": "ccf5e084f622",
+      "dur": 7.432,
+      "audio": "audio/ep02-for-here-or-to-go/pitch.wav",
+      "words": [
+        {
+          "t": "Esse",
+          "s": 0,
+          "e": 0.255
+        },
+        {
+          "t": "tutor",
+          "s": 0.302,
+          "e": 0.731
+        },
+        {
+          "t": "é",
+          "s": 0.801,
+          "e": 0.859
+        },
+        {
+          "t": "o",
+          "s": 0.917,
+          "e": 0.94
+        },
+        {
+          "t": "Pragma.",
+          "em": true,
+          "s": 1.01,
+          "e": 1.602
+        },
+        {
+          "t": "Uma",
+          "s": 2.206,
+          "e": 2.403
+        },
+        {
+          "t": "inteligência",
+          "s": 2.438,
+          "e": 3.111
+        },
+        {
+          "t": "artificial",
+          "s": 3.135,
+          "e": 3.831
+        },
+        {
+          "t": "que",
+          "s": 3.878,
+          "e": 3.959
+        },
+        {
+          "t": "conversa",
+          "s": 4.005,
+          "e": 4.423
+        },
+        {
+          "t": "com",
+          "s": 4.458,
+          "e": 4.551
+        },
+        {
+          "t": "você",
+          "s": 4.586,
+          "e": 4.795
+        },
+        {
+          "t": "por",
+          "s": 4.888,
+          "e": 5.016
+        },
+        {
+          "t": "voz",
+          "s": 5.085,
+          "e": 5.399
+        },
+        {
+          "t": "e",
+          "s": 5.782,
+          "e": 5.933
+        },
+        {
+          "t": "corrige",
+          "s": 5.991,
+          "e": 6.397
+        },
+        {
+          "t": "na",
+          "em": true,
+          "s": 6.432,
+          "e": 6.525
+        },
+        {
+          "t": "hora.",
+          "em": true,
+          "s": 6.583,
+          "e": 7.152
+        }
+      ]
+    },
+    "ritmo": {
+      "hash": "05215e20dd4c",
+      "dur": 3.345,
+      "audio": "audio/ep02-for-here-or-to-go/ritmo.wav",
+      "words": [
+        {
+          "t": "Cinco",
+          "s": 0,
+          "e": 0.302
+        },
+        {
+          "t": "minutos",
+          "s": 0.337,
+          "e": 0.685
+        },
+        {
+          "t": "por",
+          "s": 0.731,
+          "e": 0.859
+        },
+        {
+          "t": "dia,",
+          "s": 0.929,
+          "e": 1.265
+        },
+        {
+          "t": "até",
+          "s": 1.416,
+          "e": 1.614
+        },
+        {
+          "t": "você",
+          "s": 1.66,
+          "e": 1.834
+        },
+        {
+          "t": "parar",
+          "s": 1.892,
+          "e": 2.113
+        },
+        {
+          "t": "de",
+          "s": 2.148,
+          "e": 2.218
+        },
+        {
+          "t": "travar.",
+          "s": 2.264,
+          "e": 3.065
+        }
+      ]
+    },
+    "fim": {
+      "hash": "e4705c0500f4",
+      "dur": 1.348,
+      "audio": "audio/ep02-for-here-or-to-go/fim.wav",
+      "words": [
+        {
+          "t": "Link",
+          "s": 0,
+          "e": 0.279
+        },
+        {
+          "t": "na",
+          "s": 0.348,
+          "e": 0.43
+        },
+        {
+          "t": "bio.",
+          "s": 0.476,
+          "e": 1.068
+        }
+      ]
+    }
+  }
+}

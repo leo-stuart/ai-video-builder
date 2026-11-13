@@ -1,0 +1,92 @@
+[
+  {
+    "id": "25-years",
+    "place": "hotel",
+    "title": "I have 25 years",
+    "ficha": {
+      "wrong": "I have 25 years.",
+      "wrongMeaning": "tenho 25 anos de… quê?",
+      "heardPt": "Só que ele ouviu: *tenho 25 anos de quê?*",
+      "reaction": "Sorry, what?",
+      "right": "I'm 25.",
+      "rightPt": "eu tenho 25 anos",
+      "rightCompare": "I'm 25. (ser, não ter)",
+      "wrongCompare": "I have 25 years."
+    }
+  },
+  {
+    "id": "with-hunger",
+    "place": "restaurante",
+    "title": "I'm with hunger",
+    "ficha": {
+      "wrong": "I'm with hunger.",
+      "wrongMeaning": "estou acompanhado da fome",
+      "heardPt": "Só que ele ouviu: *estou acompanhado da fome*.",
+      "reaction": "Sorry, what?",
+      "right": "I'm hungry.",
+      "rightPt": "estou com fome",
+      "rightCompare": "I'm hungry.",
+      "wrongCompare": "I'm with hunger."
+    }
+  },
+  {
+    "id": "make-question",
+    "place": "loja",
+    "title": "Make a question",
+    "ficha": {
+      "wrong": "Can I make a question?",
+      "wrongMeaning": "posso fabricar uma pergunta?",
+      "heardPt": "Só que ele ouviu: *posso fabricar uma pergunta?*",
+      "reaction": "Sorry, what?",
+      "right": "Can I ask a question?",
+      "rightPt": "posso fazer uma pergunta?",
+      "rightCompare": "Can I ask a question?",
+      "wrongCompare": "Can I make a question?"
+    }
+  },
+  {
+    "id": "im-agree",
+    "place": "imigracao",
+    "title": "I'm agree",
+    "ficha": {
+      "wrong": "I'm agree.",
+      "wrongMeaning": "eu sou concordo",
+      "heardPt": "Só que ele ouviu: *eu sou concordo*.",
+      "reaction": "Sorry, what?",
+      "right": "I agree.",
+      "rightPt": "eu concordo",
+      "rightCompare": "I agree.",
+      "wrongCompare": "I'm agree."
+    }
+  },
+  {
+    "id": "i-pretend",
+    "place": "aeroporto",
+    "title": "I pretend to",
+    "ficha": {
+      "wrong": "I pretend to go there.",
+      "wrongMeaning": "finjo que vou lá",
+      "heardPt": "Só que ele ouviu: *finjo que vou lá*.",
+      "reaction": "Sorry, what?",
+      "right": "I plan to go there.",
+      "rightPt": "pretendo ir lá",
+      "rightCompare": "I plan to go there.",
+      "wrongCompare": "I pretend to go there."
+    }
+  },
+  {
+    "id": "actually-live",
+    "place": "cafe",
+    "title": "Actually I live",
+    "ficha": {
+      "wrong": "Actually, I live in Rio.",
+      "wrongMeaning": "na verdade, eu moro no Rio",
+      "heardPt": "Só que ele ouviu: *na verdade, eu moro no Rio*.",
+      "reaction": "Sorry, what?",
+      "right": "I currently live in Rio.",
+      "rightPt": "atualmente moro no Rio",
+      "rightCompare": "I currently live in Rio.",
+      "wrongCompare": "Actually, I live in Rio."
+    }
+  }
+]

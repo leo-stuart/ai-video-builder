@@ -1,0 +1,626 @@
+{
+  "provider": "elevenlabs",
+  "scenes": {
+    "curso": {
+      "hash": "2b75508bc97e",
+      "dur": 2.881,
+      "audio": "audio/ep04-window-or-aisle/curso.wav",
+      "words": [
+        {
+          "t": "Você",
+          "s": 0,
+          "e": 0.244
+        },
+        {
+          "t": "decorou",
+          "s": 0.29,
+          "e": 0.65
+        },
+        {
+          "t": "duzentos",
+          "em": true,
+          "s": 0.708,
+          "e": 1.242
+        },
+        {
+          "t": "verbos",
+          "s": 1.312,
+          "e": 1.614
+        },
+        {
+          "t": "irregulares.",
+          "s": 1.66,
+          "e": 2.601
+        }
+      ]
+    },
+    "ny": {
+      "hash": "1e121aa1af34",
+      "dur": 2.556,
+      "audio": "audio/ep04-window-or-aisle/ny.wav",
+      "words": [
+        {
+          "t": "Aí",
+          "s": 0,
+          "e": 0.163
+        },
+        {
+          "t": "chega",
+          "s": 0.197,
+          "e": 0.383
+        },
+        {
+          "t": "no",
+          "s": 0.418,
+          "e": 0.464
+        },
+        {
+          "t": "aeroporto,",
+          "em": true,
+          "s": 0.488,
+          "e": 1.138
+        },
+        {
+          "t": "atrasado.",
+          "s": 1.289,
+          "e": 2.276
+        }
+      ]
+    },
+    "pergunta": {
+      "hash": "d93dfe978f2a",
+      "dur": 1.952,
+      "audio": "audio/ep04-window-or-aisle/pergunta.wav",
+      "words": [
+        {
+          "t": "Hi!",
+          "en": true,
+          "s": 0,
+          "e": 0.441
+        },
+        {
+          "t": "Window",
+          "en": true,
+          "s": 0.615,
+          "e": 0.894
+        },
+        {
+          "t": "or",
+          "en": true,
+          "s": 0.929,
+          "e": 0.998
+        },
+        {
+          "t": "aisle?",
+          "en": true,
+          "s": 1.045,
+          "e": 1.672
+        }
+      ]
+    },
+    "trava": {
+      "hash": "74fd963191cd",
+      "dur": 2.138,
+      "audio": "audio/ep04-window-or-aisle/trava.wav",
+      "words": [
+        {
+          "t": "E",
+          "s": 0,
+          "e": 0.093
+        },
+        {
+          "t": "você…",
+          "s": 0.163,
+          "e": 0.824
+        },
+        {
+          "t": "trava.",
+          "em": true,
+          "s": 1.103,
+          "e": 1.858
+        }
+      ]
+    },
+    "yes": {
+      "hash": "48b149bbbb5c",
+      "dur": 1.534,
+      "audio": "audio/ep04-window-or-aisle/yes.wav",
+      "words": [
+        {
+          "t": "Uh…",
+          "en": true,
+          "s": 0,
+          "e": 0.325
+        },
+        {
+          "t": "yes?",
+          "en": true,
+          "s": 0.65,
+          "e": 1.254
+        }
+      ]
+    },
+    "what": {
+      "hash": "01613ffbfe2f",
+      "dur": 1.348,
+      "audio": "audio/ep04-window-or-aisle/what.wav",
+      "words": [
+        {
+          "t": "Yes…",
+          "en": true,
+          "s": 0,
+          "e": 0.406
+        },
+        {
+          "t": "what?",
+          "en": true,
+          "s": 0.464,
+          "e": 1.068
+        }
+      ]
+    },
+    "fila": {
+      "hash": "15fae6c64d15",
+      "dur": 3.066,
+      "audio": "audio/ep04-window-or-aisle/fila.wav",
+      "words": [
+        {
+          "t": "A",
+          "s": 0,
+          "e": 0.093
+        },
+        {
+          "t": "fila",
+          "s": 0.174,
+          "e": 0.372
+        },
+        {
+          "t": "cresce.",
+          "s": 0.418,
+          "e": 0.882
+        },
+        {
+          "t": "Ninguém",
+          "s": 1.393,
+          "e": 1.718
+        },
+        {
+          "t": "entende",
+          "s": 1.741,
+          "e": 2.09
+        },
+        {
+          "t": "nada.",
+          "s": 2.148,
+          "e": 2.786
+        }
+      ]
+    },
+    "fora": {
+      "hash": "26ee47d947f6",
+      "dur": 1.859,
+      "audio": "audio/ep04-window-or-aisle/fora.wav",
+      "words": [
+        {
+          "t": "E",
+          "s": 0,
+          "e": 0.093
+        },
+        {
+          "t": "você",
+          "s": 0.163,
+          "e": 0.372
+        },
+        {
+          "t": "fica",
+          "s": 0.464,
+          "e": 0.697
+        },
+        {
+          "t": "sem",
+          "em": true,
+          "s": 0.743,
+          "e": 0.894
+        },
+        {
+          "t": "voo.",
+          "em": true,
+          "s": 0.975,
+          "e": 1.579
+        }
+      ]
+    },
+    "balanca": {
+      "hash": "87da43ff922b",
+      "dur": 4.506,
+      "audio": "audio/ep04-window-or-aisle/balanca.wav",
+      "words": [
+        {
+          "t": "O",
+          "s": 0,
+          "e": 0.081
+        },
+        {
+          "t": "problema",
+          "s": 0.139,
+          "e": 0.488
+        },
+        {
+          "t": "não",
+          "s": 0.534,
+          "e": 0.697
+        },
+        {
+          "t": "é",
+          "s": 0.755,
+          "e": 0.801
+        },
+        {
+          "t": "o",
+          "s": 0.859,
+          "e": 0.882
+        },
+        {
+          "t": "seu",
+          "s": 0.929,
+          "e": 1.057
+        },
+        {
+          "t": "inglês.",
+          "s": 1.103,
+          "e": 1.602
+        },
+        {
+          "t": "É",
+          "s": 1.927,
+          "e": 1.974
+        },
+        {
+          "t": "que",
+          "s": 2.043,
+          "e": 2.113
+        },
+        {
+          "t": "você",
+          "s": 2.148,
+          "e": 2.345
+        },
+        {
+          "t": "nunca",
+          "s": 2.426,
+          "e": 2.705
+        },
+        {
+          "t": "falou",
+          "em": true,
+          "s": 2.752,
+          "e": 3.019
+        },
+        {
+          "t": "ele",
+          "s": 3.088,
+          "e": 3.216
+        },
+        {
+          "t": "em",
+          "s": 3.239,
+          "e": 3.286
+        },
+        {
+          "t": "voz",
+          "s": 3.332,
+          "e": 3.541
+        },
+        {
+          "t": "alta.",
+          "s": 3.634,
+          "e": 4.226
+        }
+      ]
+    },
+    "pragma": {
+      "hash": "c150eb327c0e",
+      "dur": 1.998,
+      "audio": "audio/ep04-window-or-aisle/pragma.wav",
+      "words": [
+        {
+          "t": "Então",
+          "s": 0,
+          "e": 0.29
+        },
+        {
+          "t": "você",
+          "s": 0.313,
+          "e": 0.511
+        },
+        {
+          "t": "abre",
+          "s": 0.592,
+          "e": 0.801
+        },
+        {
+          "t": "o",
+          "s": 0.836,
+          "e": 0.882
+        },
+        {
+          "t": "Pragma.",
+          "em": true,
+          "s": 0.94,
+          "e": 1.718
+        }
+      ]
+    },
+    "treino": {
+      "hash": "9bea5061c1d4",
+      "dur": 1.58,
+      "audio": "audio/ep04-window-or-aisle/treino.wav",
+      "words": [
+        {
+          "t": "Window",
+          "en": true,
+          "s": 0,
+          "e": 0.395
+        },
+        {
+          "t": "or",
+          "en": true,
+          "s": 0.453,
+          "e": 0.546
+        },
+        {
+          "t": "aisle?",
+          "en": true,
+          "s": 0.627,
+          "e": 1.3
+        }
+      ]
+    },
+    "erro": {
+      "hash": "ed01bda21ce8",
+      "dur": 1.487,
+      "audio": "audio/ep04-window-or-aisle/erro.wav",
+      "words": [
+        {
+          "t": "Corridor,",
+          "en": true,
+          "s": 0,
+          "e": 0.488
+        },
+        {
+          "t": "please.",
+          "en": true,
+          "s": 0.511,
+          "e": 1.207
+        }
+      ]
+    },
+    "corrige": {
+      "hash": "566a08b56ca4",
+      "dur": 1.998,
+      "audio": "audio/ep04-window-or-aisle/corrige.wav",
+      "words": [
+        {
+          "t": "Almost!",
+          "en": true,
+          "s": 0,
+          "e": 0.522
+        },
+        {
+          "t": "Say:",
+          "en": true,
+          "s": 0.639,
+          "e": 0.975
+        },
+        {
+          "t": "aisle,",
+          "en": true,
+          "s": 0.998,
+          "e": 1.3
+        },
+        {
+          "t": "please.",
+          "en": true,
+          "s": 1.324,
+          "e": 1.718
+        }
+      ]
+    },
+    "certo": {
+      "hash": "dae4db48fc88",
+      "dur": 1.348,
+      "audio": "audio/ep04-window-or-aisle/certo.wav",
+      "words": [
+        {
+          "t": "Aisle,",
+          "en": true,
+          "s": 0,
+          "e": 0.302
+        },
+        {
+          "t": "please.",
+          "en": true,
+          "s": 0.325,
+          "e": 1.068
+        }
+      ]
+    },
+    "habito": {
+      "hash": "4f750899eb08",
+      "dur": 5.11,
+      "audio": "audio/ep04-window-or-aisle/habito.wav",
+      "words": [
+        {
+          "t": "Cinco",
+          "s": 0,
+          "e": 0.313
+        },
+        {
+          "t": "minutos",
+          "s": 0.348,
+          "e": 0.65
+        },
+        {
+          "t": "por",
+          "s": 0.697,
+          "e": 0.836
+        },
+        {
+          "t": "dia,",
+          "s": 0.894,
+          "e": 1.254
+        },
+        {
+          "t": "com",
+          "s": 1.498,
+          "e": 1.649
+        },
+        {
+          "t": "um",
+          "s": 1.672,
+          "e": 1.741
+        },
+        {
+          "t": "tutor",
+          "s": 1.788,
+          "e": 2.101
+        },
+        {
+          "t": "de",
+          "s": 2.159,
+          "e": 2.206
+        },
+        {
+          "t": "inteligência",
+          "s": 2.229,
+          "e": 2.798
+        },
+        {
+          "t": "artificial",
+          "s": 2.868,
+          "e": 3.495
+        },
+        {
+          "t": "que",
+          "s": 3.541,
+          "e": 3.622
+        },
+        {
+          "t": "corrige",
+          "s": 3.68,
+          "e": 4.063
+        },
+        {
+          "t": "na",
+          "em": true,
+          "s": 4.11,
+          "e": 4.203
+        },
+        {
+          "t": "hora.",
+          "em": true,
+          "s": 4.261,
+          "e": 4.83
+        }
+      ]
+    },
+    "volta": {
+      "hash": "e55ca222680a",
+      "dur": 1.534,
+      "audio": "audio/ep04-window-or-aisle/volta.wav",
+      "words": [
+        {
+          "t": "Aí",
+          "s": 0,
+          "e": 0.174
+        },
+        {
+          "t": "você",
+          "s": 0.209,
+          "e": 0.383
+        },
+        {
+          "t": "volta",
+          "s": 0.453,
+          "e": 0.708
+        },
+        {
+          "t": "lá.",
+          "s": 0.755,
+          "e": 1.254
+        }
+      ]
+    },
+    "revanche": {
+      "hash": "766c468eb7fc",
+      "dur": 1.441,
+      "audio": "audio/ep04-window-or-aisle/revanche.wav",
+      "words": [
+        {
+          "t": "Window",
+          "en": true,
+          "s": 0,
+          "e": 0.36
+        },
+        {
+          "t": "or",
+          "en": true,
+          "s": 0.418,
+          "e": 0.499
+        },
+        {
+          "t": "aisle?",
+          "en": true,
+          "s": 0.546,
+          "e": 1.161
+        }
+      ]
+    },
+    "resposta": {
+      "hash": "ee14b32fbd91",
+      "dur": 1.395,
+      "audio": "audio/ep04-window-or-aisle/resposta.wav",
+      "words": [
+        {
+          "t": "Aisle,",
+          "en": true,
+          "s": 0,
+          "e": 0.348
+        },
+        {
+          "t": "please!",
+          "en": true,
+          "s": 0.383,
+          "e": 1.115
+        }
+      ]
+    },
+    "fim": {
+      "hash": "3a4adfe499b2",
+      "dur": 2.184,
+      "audio": "audio/ep04-window-or-aisle/fim.wav",
+      "words": [
+        {
+          "t": "Pragma.",
+          "s": 0,
+          "e": 0.627
+        },
+        {
+          "t": "Link",
+          "s": 0.952,
+          "e": 1.161
+        },
+        {
+          "t": "na",
+          "s": 1.207,
+          "e": 1.277
+        },
+        {
+          "t": "bio.",
+          "s": 1.324,
+          "e": 1.904
+        }
+      ]
+    }
+  }
+}

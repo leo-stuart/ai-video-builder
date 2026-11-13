@@ -1,0 +1,413 @@
+{
+  "provider": "elevenlabs",
+  "scenes": {
+    "abertura": {
+      "hash": "84ec59330589",
+      "dur": 2.556,
+      "audio": "audio/ep14-teste-haiku/abertura.wav",
+      "words": [
+        {
+          "t": "Parece",
+          "s": 0,
+          "e": 0.464
+        },
+        {
+          "t": "certo.",
+          "s": 0.511,
+          "e": 0.975
+        },
+        {
+          "t": "Mas",
+          "s": 1.184,
+          "e": 1.37
+        },
+        {
+          "t": "soa",
+          "s": 1.393,
+          "e": 1.591
+        },
+        {
+          "t": "errado.",
+          "em": true,
+          "s": 1.614,
+          "e": 2.276
+        }
+      ]
+    },
+    "diz": {
+      "hash": "4e5275a08356",
+      "dur": 1.905,
+      "audio": "audio/ep14-teste-haiku/diz.wav",
+      "words": [
+        {
+          "t": "I",
+          "en": true,
+          "s": 0,
+          "e": 0.093
+        },
+        {
+          "t": "have",
+          "en": true,
+          "s": 0.186,
+          "e": 0.348
+        },
+        {
+          "t": "25",
+          "en": true,
+          "s": 0.418,
+          "e": 0.871
+        },
+        {
+          "t": "years.",
+          "en": true,
+          "s": 0.94,
+          "e": 1.625
+        }
+      ]
+    },
+    "ouviu": {
+      "hash": "e031dc6bd581",
+      "dur": 3.391,
+      "audio": "audio/ep14-teste-haiku/ouviu.wav",
+      "words": [
+        {
+          "t": "Só",
+          "s": 0,
+          "e": 0.174
+        },
+        {
+          "t": "que",
+          "s": 0.232,
+          "e": 0.302
+        },
+        {
+          "t": "ele",
+          "s": 0.325,
+          "e": 0.43
+        },
+        {
+          "t": "ouviu:",
+          "s": 0.464,
+          "e": 0.894
+        },
+        {
+          "t": "tenho",
+          "em": true,
+          "s": 1.335,
+          "e": 1.556
+        },
+        {
+          "t": "25",
+          "em": true,
+          "s": 1.591,
+          "e": 2.09
+        },
+        {
+          "t": "anos",
+          "em": true,
+          "s": 2.206,
+          "e": 2.403
+        },
+        {
+          "t": "de",
+          "em": true,
+          "s": 2.45,
+          "e": 2.531
+        },
+        {
+          "t": "quê?",
+          "em": true,
+          "s": 2.589,
+          "e": 3.111
+        }
+      ]
+    },
+    "reacao": {
+      "hash": "4fc71b591c59",
+      "dur": 1.162,
+      "audio": "audio/ep14-teste-haiku/reacao.wav",
+      "words": [
+        {
+          "t": "Sorry,",
+          "en": true,
+          "s": 0,
+          "e": 0.337
+        },
+        {
+          "t": "what?",
+          "en": true,
+          "s": 0.36,
+          "e": 0.882
+        }
+      ]
+    },
+    "regra": {
+      "hash": "954de7bb3c04",
+      "dur": 2.695,
+      "audio": "audio/ep14-teste-haiku/regra.wav",
+      "words": [
+        {
+          "t": "O",
+          "s": 0,
+          "e": 0.151
+        },
+        {
+          "t": "certo",
+          "s": 0.232,
+          "e": 0.557
+        },
+        {
+          "t": "é:",
+          "s": 0.639,
+          "e": 0.906
+        },
+        {
+          "t": "I'm",
+          "en": true,
+          "s": 1.289,
+          "e": 1.474
+        },
+        {
+          "t": "25.",
+          "en": true,
+          "s": 1.544,
+          "e": 2.415
+        }
+      ]
+    },
+    "pragma": {
+      "hash": "ab7e24626f72",
+      "dur": 2.091,
+      "audio": "audio/ep14-teste-haiku/pragma.wav",
+      "words": [
+        {
+          "t": "Até",
+          "s": 0,
+          "e": 0.221
+        },
+        {
+          "t": "que",
+          "s": 0.255,
+          "e": 0.325
+        },
+        {
+          "t": "você",
+          "s": 0.36,
+          "e": 0.557
+        },
+        {
+          "t": "testa",
+          "s": 0.639,
+          "e": 0.952
+        },
+        {
+          "t": "o",
+          "s": 0.987,
+          "e": 1.01
+        },
+        {
+          "t": "Pragma.",
+          "em": true,
+          "s": 1.068,
+          "e": 1.811
+        }
+      ]
+    },
+    "treino": {
+      "hash": "67546e28021f",
+      "dur": 1.952,
+      "audio": "audio/ep14-teste-haiku/treino.wav",
+      "words": [
+        {
+          "t": "Say:",
+          "en": true,
+          "s": 0,
+          "e": 0.418
+        },
+        {
+          "t": "I'm",
+          "en": true,
+          "s": 0.476,
+          "e": 0.65
+        },
+        {
+          "t": "25.",
+          "en": true,
+          "s": 0.72,
+          "e": 1.672
+        }
+      ]
+    },
+    "certo": {
+      "hash": "adb55088f822",
+      "dur": 1.441,
+      "audio": "audio/ep14-teste-haiku/certo.wav",
+      "words": [
+        {
+          "t": "I'm",
+          "en": true,
+          "s": 0,
+          "e": 0.174
+        },
+        {
+          "t": "25.",
+          "en": true,
+          "s": 0.232,
+          "e": 1.161
+        }
+      ]
+    },
+    "volta": {
+      "hash": "e55ca222680a",
+      "dur": 1.58,
+      "audio": "audio/ep14-teste-haiku/volta.wav",
+      "words": [
+        {
+          "t": "Aí",
+          "s": 0,
+          "e": 0.139
+        },
+        {
+          "t": "você",
+          "s": 0.197,
+          "e": 0.406
+        },
+        {
+          "t": "volta",
+          "s": 0.476,
+          "e": 0.778
+        },
+        {
+          "t": "lá.",
+          "s": 0.813,
+          "e": 1.3
+        }
+      ]
+    },
+    "resposta": {
+      "hash": "16c7c569c8b6",
+      "dur": 1.487,
+      "audio": "audio/ep14-teste-haiku/resposta.wav",
+      "words": [
+        {
+          "t": "I'm",
+          "en": true,
+          "s": 0,
+          "e": 0.186
+        },
+        {
+          "t": "25!",
+          "en": true,
+          "s": 0.255,
+          "e": 1.207
+        }
+      ]
+    },
+    "habito": {
+      "hash": "4f750899eb08",
+      "dur": 5.296,
+      "audio": "audio/ep14-teste-haiku/habito.wav",
+      "words": [
+        {
+          "t": "Cinco",
+          "s": 0,
+          "e": 0.325
+        },
+        {
+          "t": "minutos",
+          "s": 0.36,
+          "e": 0.708
+        },
+        {
+          "t": "por",
+          "s": 0.766,
+          "e": 0.894
+        },
+        {
+          "t": "dia,",
+          "s": 0.975,
+          "e": 1.347
+        },
+        {
+          "t": "com",
+          "s": 1.591,
+          "e": 1.765
+        },
+        {
+          "t": "um",
+          "s": 1.8,
+          "e": 1.846
+        },
+        {
+          "t": "tutor",
+          "s": 1.927,
+          "e": 2.334
+        },
+        {
+          "t": "de",
+          "s": 2.368,
+          "e": 2.415
+        },
+        {
+          "t": "inteligência",
+          "s": 2.45,
+          "e": 3.088
+        },
+        {
+          "t": "artificial",
+          "s": 3.158,
+          "e": 3.773
+        },
+        {
+          "t": "que",
+          "s": 3.82,
+          "e": 3.889
+        },
+        {
+          "t": "corrige",
+          "s": 3.947,
+          "e": 4.296
+        },
+        {
+          "t": "na",
+          "em": true,
+          "s": 4.342,
+          "e": 4.423
+        },
+        {
+          "t": "hora.",
+          "em": true,
+          "s": 4.47,
+          "e": 5.016
+        }
+      ]
+    },
+    "fim": {
+      "hash": "3a4adfe499b2",
+      "dur": 2.184,
+      "audio": "audio/ep14-teste-haiku/fim.wav",
+      "words": [
+        {
+          "t": "Pragma.",
+          "s": 0,
+          "e": 0.569
+        },
+        {
+          "t": "Link",
+          "s": 0.894,
+          "e": 1.138
+        },
+        {
+          "t": "na",
+          "s": 1.184,
+          "e": 1.265
+        },
+        {
+          "t": "bio.",
+          "s": 1.312,
+          "e": 1.904
+        }
+      ]
+    }
+  }
+}

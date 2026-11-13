@@ -1,0 +1,98 @@
+[
+  {
+    "id": "quiz-aisle",
+    "place": "aeroporto",
+    "title": "Quiz: window or aisle",
+    "ficha": {
+      "question": "Window or aisle?",
+      "quizAsk": "Qual resposta é a *certa*?",
+      "optA": "Corridor, please.",
+      "optB": "Aisle, please.",
+      "optC": "Hallway, please.",
+      "correct": "B",
+      "answerNarr": "É a letra *B*.",
+      "right": "Aisle, please.",
+      "rightPt": "corredor, por favor"
+    }
+  },
+  {
+    "id": "quiz-card",
+    "place": "loja",
+    "title": "Quiz: cash or card",
+    "ficha": {
+      "question": "Cash or card?",
+      "quizAsk": "Qual resposta é a *certa*?",
+      "optA": "Card, please.",
+      "optB": "In the card.",
+      "optC": "With card, please.",
+      "correct": "A",
+      "answerNarr": "É a letra *A*.",
+      "right": "Card, please.",
+      "rightPt": "cartão, por favor"
+    }
+  },
+  {
+    "id": "quiz-check",
+    "place": "restaurante",
+    "title": "Quiz: the check",
+    "ficha": {
+      "question": "Anything else?",
+      "quizAsk": "Qual resposta é a *certa*?",
+      "optA": "Just the check, please.",
+      "optB": "The account, please.",
+      "optC": "The bill of the bank.",
+      "correct": "A",
+      "answerNarr": "É a letra *A*.",
+      "right": "Just the check, please.",
+      "rightPt": "só a conta, por favor"
+    }
+  },
+  {
+    "id": "quiz-nights",
+    "place": "hotel",
+    "title": "Quiz: how many nights",
+    "ficha": {
+      "question": "How many nights?",
+      "quizAsk": "Qual resposta é a *certa*?",
+      "optA": "I stay three nights.",
+      "optB": "Three nights, please.",
+      "optC": "Three nights, we are.",
+      "correct": "B",
+      "answerNarr": "É a letra *B*.",
+      "right": "Three nights, please.",
+      "rightPt": "três noites, por favor"
+    }
+  },
+  {
+    "id": "quiz-prescription",
+    "place": "farmacia",
+    "title": "Quiz: prescription",
+    "ficha": {
+      "question": "Do you have a prescription?",
+      "quizAsk": "Qual resposta é a *certa*?",
+      "optA": "I have a recipe.",
+      "optB": "Yes, here it is.",
+      "optC": "Yes, I am.",
+      "correct": "B",
+      "answerNarr": "É a letra *B*.",
+      "right": "Yes, here it is.",
+      "rightPt": "sim, aqui está"
+    }
+  },
+  {
+    "id": "quiz-vacation",
+    "place": "imigracao",
+    "title": "Quiz: purpose of visit",
+    "ficha": {
+      "question": "What's the purpose of your visit?",
+      "quizAsk": "Qual resposta é a *certa*?",
+      "optA": "I'm here on vacation.",
+      "optB": "I came to know.",
+      "optC": "Visit, only.",
+      "correct": "A",
+      "answerNarr": "É a letra *A*.",
+      "right": "I'm here on vacation.",
+      "rightPt": "estou aqui de férias"
+    }
+  }
+]

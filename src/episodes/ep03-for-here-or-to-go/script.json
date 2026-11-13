@@ -1,0 +1,38 @@
+{
+  "slug": "ep03-for-here-or-to-go",
+  "series": "Inglês sem travar",
+  "number": 3,
+  "title": "For here or to go? (versão história em 3D)",
+  "eleven": "TX3LPaxmHKxFdv7VOQHJ",
+  "captions": { "y": 1290, "size": 84 },
+  "post": {
+    "caption": "Seis anos de curso. Aí perguntam \"For here or to go?\" e você trava. 🧊☕\n\nÉ só \"pra comer aqui ou pra levar?\". Resposta: \"To go, please.\" ou \"For here, please.\"\n\nO problema nunca foi o seu inglês. Foi nunca ter falado em voz alta. Qual frase já te congelou lá fora? Conta aqui 👇",
+    "hashtags": ["ingles", "aprenderingles", "dicasdeingles", "inglesparaviagem", "falaringles", "inglesfluente", "pragma"]
+  },
+  "cast": {
+    "voce": { "label": "Você", "color": "gold", "eleven": "bIHbv24MWmeRgasZH58o", "say": { "pt": "Luciana", "en": "Luciana" } },
+    "caixa": { "label": "Caixa", "color": "coral", "eleven": "cgSgspJ2msm6clMCkdW9", "say": { "en": "Samantha" } },
+    "tutor": { "label": "Tutor de IA", "color": "indigo", "eleven": "XrExE9yKIg1WjnnlVkGX", "say": { "en": "Daniel" } }
+  },
+  "scenes": [
+    { "id": "curso", "narration": "Você fez *seis anos* de curso de inglês." },
+    { "id": "ny", "narration": "Aí chega em *Nova York*, morrendo de fome." },
+    { "id": "pergunta", "speaker": "caixa", "narration": "[en]Hi! For here or to go?[/en]" },
+    { "id": "trava", "narration": "E você… *trava*.", "hold": 0.4 },
+    { "id": "yes", "speaker": "voce", "narration": "[en]Uh… yes?[/en]", "hold": 0.3 },
+    { "id": "what", "speaker": "caixa", "narration": "[en]Yes… what?[/en]", "hold": 0.2 },
+    { "id": "fila", "narration": "A fila cresce. Ninguém entende nada." },
+    { "id": "fora", "narration": "E você sai de lá *sem café*." },
+    { "id": "balanca", "narration": "O problema não é o seu inglês. É que você nunca *falou* ele em voz alta." },
+    { "id": "pragma", "narration": "Então você abre o *Pragma*." },
+    { "id": "treino", "speaker": "tutor", "sub": "Pra comer aqui ou pra levar?", "narration": "[en]For here or to go?[/en]" },
+    { "id": "erro", "speaker": "voce", "narration": "[en]I want to go.[/en]", "hold": 0.5 },
+    { "id": "corrige", "speaker": "tutor", "sub": "Quase! Diga: \"pra levar, por favor\".", "narration": "[en]Almost! Say: to go, please.[/en]" },
+    { "id": "certo", "speaker": "voce", "narration": "[en]To go, please.[/en]", "hold": 0.6 },
+    { "id": "habito", "narration": "Cinco minutos por dia, com um tutor de inteligência artificial que corrige *na hora*." },
+    { "id": "volta", "narration": "Aí você volta lá." },
+    { "id": "revanche", "speaker": "caixa", "narration": "[en]For here or to go?[/en]" },
+    { "id": "resposta", "speaker": "voce", "narration": "[en]To go, please![/en]", "hold": 1.0 },
+    { "id": "fim", "narration": "Pragma. Link na bio.", "captions": false, "hold": 1.6 }
+  ]
+}

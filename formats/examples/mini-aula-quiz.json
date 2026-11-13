@@ -1,0 +1,11 @@
+{
+  "question": "Window or aisle?",
+  "quizAsk": "Qual resposta é a *certa*?",
+  "optA": "Corridor, please.",
+  "optB": "Aisle, please.",
+  "optC": "Hallway, please.",
+  "correct": "B",
+  "answerNarr": "É a letra *B*.",
+  "right": "Aisle, please.",
+  "rightPt": "corredor, por favor"
+}

@@ -1,0 +1,12 @@
+{
+  "freedom": "auto",
+  "models": { "haiku": "recipe", "sonnet": "guided", "opus": "free", "fable": "free", "mythos": "free" },
+  "variety": { "window": 6, "maxShared": 2 },
+  "voices": {
+    "narrator": "TX3LPaxmHKxFdv7VOQHJ",
+    "voce": "bIHbv24MWmeRgasZH58o",
+    "atendente": "cgSgspJ2msm6clMCkdW9",
+    "tutor": "XrExE9yKIg1WjnnlVkGX"
+  },
+  "post": { "slots": ["08:00", "12:30", "18:00", "21:00", "23:00"] }
+}
