@@ -1,21 +1,24 @@
 import React, { useEffect } from "react";
 
+/** Nome provisório do produto. Troque aqui quando ele tiver nome. */
+export const PRODUCT = "Estúdio";
+
 export const WHO: Record<string, { label: string; c: string }> = {
-  narrador: { label: "Narrador", c: "#b9b6e6" },
-  voce: { label: "Você", c: "#ffc234" },
-  atendente: { label: "Atendente", c: "#ff7a59" },
-  tutor: { label: "Tutor", c: "#7b72ff" },
+  narrador: { label: "Narrador", c: "#c3c9d2" },
+  voce: { label: "Você", c: "#f0c488" },
+  atendente: { label: "Atendente", c: "#f0a096" },
+  tutor: { label: "Tutor", c: "#9fd6ff" },
 };
-export const who = (s?: string) => WHO[s ?? "narrador"] ?? { label: s!, c: "#28c5e7" };
+export const who = (s?: string) => WHO[s ?? "narrador"] ?? { label: s!, c: "#7ef0c3" };
 
 export const STATUS: Record<string, { label: string; c: string }> = {
-  draft: { label: "Rascunho", c: "#9d9ac8" },
-  voiced: { label: "Com voz", c: "#28c5e7" },
-  rendered: { label: "Renderizado", c: "#ffc234" },
-  packed: { label: "Pronto", c: "#19c99a" },
+  draft: { label: "Rascunho", c: "#9aa1ad" },
+  voiced: { label: "Com voz", c: "#9fd6ff" },
+  rendered: { label: "Renderizado", c: "#ffb968" },
+  packed: { label: "Pronto", c: "#7ef0c3" },
 };
 
-const PALETTE = ["#7b72ff", "#ff7a59", "#19c99a", "#b57cff", "#28c5e7", "#ffc234", "#ff5d6c"];
+const PALETTE = ["#9fd6ff", "#f0c488", "#7ef0c3", "#f0a096", "#c3c9d2"];
 export const colorOf = (s: string) => PALETTE[[...s].reduce((a, c) => (a * 31 + c.charCodeAt(0)) >>> 0, 7) % PALETTE.length];
 
 /** Mostra a narração como ela sai na legenda: inglês em dourado, ênfase em coral. */

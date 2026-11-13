@@ -253,7 +253,7 @@ export const Editor: React.FC<{ slug: string; onBack: () => void }> = ({ slug, o
               <span><span className="kbd">espaço</span> tocar</span>
               <span><span className="kbd">↑</span> <span className="kbd">↓</span> trocar de cena</span>
               <span><span className="kbd">⌘S</span> salvar</span>
-              {mute && !noVoice && <span style={{ color: "var(--coral)" }}>prévia sem voz</span>}
+              {mute && !noVoice && <span style={{ color: "var(--warn)" }}>prévia sem voz</span>}
             </div>
           </div>
         </section>
@@ -264,8 +264,8 @@ export const Editor: React.FC<{ slug: string; onBack: () => void }> = ({ slug, o
             <button className={`tab${tab === "mundo" ? " on" : ""}`} onClick={() => setTab("mundo")}>Mundo</button>
             <button className={`tab${tab === "problemas" ? " on" : ""}`} onClick={() => setTab("problemas")}>
               Problemas
-              {val.errors.length > 0 && <span className="ct" style={{ ["--c" as any]: "var(--red)" }}>{val.errors.length}</span>}
-              {val.warnings.length > 0 && <span className="ct" style={{ ["--c" as any]: "var(--gold)" }}>{val.warnings.length}</span>}
+              {val.errors.length > 0 && <span className="ct" style={{ ["--c" as any]: "var(--bad)" }}>{val.errors.length}</span>}
+              {val.warnings.length > 0 && <span className="ct" style={{ ["--c" as any]: "var(--warn)" }}>{val.warnings.length}</span>}
             </button>
           </div>
           {tab === "cena" && beat && <SceneForm key={beat.id} slug={slug} beat={beat} onSaved={load} onDirty={setDirty} saveRef={saveRef} />}
@@ -278,7 +278,7 @@ export const Editor: React.FC<{ slug: string; onBack: () => void }> = ({ slug, o
               {[...val.errors.map((e) => ({ ...e, bad: true })), ...val.warnings.map((e) => ({ ...e, bad: false }))].map((it, i) => {
                 const sc = it.scene ?? it.message.match(/cena (?:\d+ \()?"([a-z0-9]+)"/)?.[1];
                 return (
-                  <button key={i} className="issue" style={{ ["--c" as any]: it.bad ? "var(--red)" : "var(--gold)" }} onClick={() => sc && scenes.some((s) => s.id === sc) && go(sc)}>
+                  <button key={i} className="issue" style={{ ["--c" as any]: it.bad ? "var(--bad)" : "var(--warn)" }} onClick={() => sc && scenes.some((s) => s.id === sc) && go(sc)}>
                     <i>{it.bad ? "!" : "?"}</i>
                     <span>{human(it.message)}</span>
                   </button>
@@ -291,7 +291,7 @@ export const Editor: React.FC<{ slug: string; onBack: () => void }> = ({ slug, o
 
       {job && (running || job.status === "error") && (
         <div className={`toast${job.status === "error" ? " bad" : ""}`}>
-          {running ? <span className="spin" /> : <span style={{ color: "var(--red)" }}>✕</span>}
+          {running ? <span className="spin" /> : <span style={{ color: "var(--bad)" }}>✕</span>}
           <span>
             <b>{running ? KIND[job.kind] : "Falhou"}</b>
             <span className="mute"> {running ? (job.progress.label ?? "") : job.error?.message}</span>
@@ -506,7 +506,7 @@ const VoiceDialog: React.FC<{ ep: any; scenes: any[]; onClose: () => void; onGo:
           <div className="line" key={s.id} style={{ ["--c" as any]: w.c }}>
             <span className="who">{s.beat.speaker ? (ep.spec.cast?.[s.beat.speaker]?.label ?? w.label) : w.label}</span>
             <span><Rich text={s.beat.narration} /></span>
-            {s.voice === "ok" ? <span className="tag">já tem</span> : <span className="pill" style={{ ["--c" as any]: "var(--gold)", height: 22 }}>nova</span>}
+            {s.voice === "ok" ? <span className="tag">já tem</span> : <span className="pill" style={{ ["--c" as any]: "var(--warn)", height: 22 }}>nova</span>}
           </div>
         );
       })}

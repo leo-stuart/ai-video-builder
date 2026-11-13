@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { api } from "./api";
 import { Editor } from "./Editor";
-import { Bold, Dialog, STATUS, colorOf } from "./lib";
+import { Bold, Dialog, PRODUCT, STATUS, colorOf } from "./lib";
 
 type Ep = { slug: string; title: string; format: string; freedom: string; status: string };
 type Pauta = { id: string; format: string; place: string; title: string; recommended?: boolean };
@@ -38,7 +38,7 @@ const Home: React.FC = () => {
   }, []);
   useEffect(load, [load]);
   useEffect(() => {
-    document.title = ws ? `${ws.brand.name} · Estúdio` : "Estúdio";
+    document.title = ws ? `${ws.brand.name} · ${PRODUCT}` : PRODUCT;
   }, [ws]);
 
   if (err) return <div className="center"><div className="err">{err}</div></div>;
@@ -51,7 +51,7 @@ const Home: React.FC = () => {
         <header className="hero">
           <div>
             <h1>
-              <small>Estúdio de vídeos</small>
+              <small>{PRODUCT} · vídeos</small>
               {ws.brand.name}
             </h1>
             {ws.brand.tagline && (
@@ -67,7 +67,7 @@ const Home: React.FC = () => {
 
         <div className="stats">
           <div className="stat"><b>{eps.length}</b><span>vídeos</span></div>
-          <div className="stat"><b style={{ color: "var(--mint)" }}>{count("packed")}</b><span>prontos para postar</span></div>
+          <div className="stat"><b style={{ color: "var(--ok)" }}>{count("packed")}</b><span>prontos para postar</span></div>
           <div className="stat"><b>{count("rendered") + count("voiced")}</b><span>em produção</span></div>
           <div className="stat"><b>{count("draft")}</b><span>rascunhos</span></div>
         </div>
@@ -185,7 +185,7 @@ const NewVideo: React.FC<{ eps: Ep[]; defaultFreedom: string; onClose: () => voi
                   <b>{p.title}</b>
                   <span style={{ display: "flex", gap: 6 }}>
                     <span className="tag">{p.place}</span>
-                    {p.recommended && <span className="pill" style={{ ["--c" as any]: "var(--gold)", height: 22 }}>recomendada</span>}
+                    {p.recommended && <span className="pill" style={{ ["--c" as any]: "var(--warn)", height: 22 }}>recomendada</span>}
                   </span>
                 </button>
               ))}
