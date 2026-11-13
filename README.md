@@ -34,7 +34,7 @@ O validador (`vid check`) impõe o nível.
 
 ## Onde está cada coisa
 
-* `skills/pragma-video/`: o passo a passo completo para um agente de IA. Comece por `SKILL.md`. Para o Claude Code enxergar a skill, rode `bash scripts/install-skills.sh` uma vez.
+* `skills/pragma-video/`: o passo a passo completo para um agente de IA. Comece por `SKILL.md`. Para o Claude Code enxergar a skill, rode `bash scripts/install-skills.sh` uma vez (instala em `~/.claude/skills`; passe um caminho para instalar só em um projeto).
 * `formats/`: os formatos (`*.json`), as fichas de exemplo (`examples/`), as pautas prontas com inglês conferido (`pautas/`) e as falas fixas variáveis (`variants.json`).
 * `src/engine/`: o motor (lê o JSON e desenha) e os tipos de cena (`beats/`). `src/kit/`: cenários, bonecos, legenda e animações.
 * `src/episodes/<slug>/`: `episode.json`, `script.json` (gerado), `timing.json` (gerado). `ep01` a `ep04` são episódios antigos, em código; o `catalogo` mostra todos os cenários e câmeras.

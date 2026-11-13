@@ -1,0 +1,122 @@
+{
+  "fps": 30,
+  "scale": 0.25,
+  "fraction": 0.7,
+  "frames": [
+    {
+      "slug": "ep14-teste-haiku",
+      "scene": "abertura",
+      "frame": 53
+    },
+    {
+      "slug": "ep14-teste-haiku",
+      "scene": "diz",
+      "frame": 125
+    },
+    {
+      "slug": "ep14-teste-haiku",
+      "scene": "ouviu",
+      "frame": 217
+    },
+    {
+      "slug": "ep14-teste-haiku",
+      "scene": "reacao",
+      "frame": 278
+    },
+    {
+      "slug": "ep14-teste-haiku",
+      "scene": "regra",
+      "frame": 348
+    },
+    {
+      "slug": "ep14-teste-haiku",
+      "scene": "pragma",
+      "frame": 417
+    },
+    {
+      "slug": "ep14-teste-haiku",
+      "scene": "treino",
+      "frame": 477
+    },
+    {
+      "slug": "ep14-teste-haiku",
+      "scene": "certo",
+      "frame": 537
+    },
+    {
+      "slug": "ep14-teste-haiku",
+      "scene": "volta",
+      "frame": 588
+    },
+    {
+      "slug": "ep14-teste-haiku",
+      "scene": "resposta",
+      "frame": 655
+    },
+    {
+      "slug": "ep14-teste-haiku",
+      "scene": "habito",
+      "frame": 789
+    },
+    {
+      "slug": "ep14-teste-haiku",
+      "scene": "fim",
+      "frame": 916
+    },
+    {
+      "slug": "ep15-teste-sonnet",
+      "scene": "abertura",
+      "frame": 57
+    },
+    {
+      "slug": "ep15-teste-sonnet",
+      "scene": "pergunta",
+      "frame": 111
+    },
+    {
+      "slug": "ep15-teste-sonnet",
+      "scene": "quiz",
+      "frame": 199
+    },
+    {
+      "slug": "ep15-teste-sonnet",
+      "scene": "gabarito",
+      "frame": 272
+    },
+    {
+      "slug": "ep15-teste-sonnet",
+      "scene": "dica",
+      "frame": 360
+    },
+    {
+      "slug": "ep15-teste-sonnet",
+      "scene": "pragma",
+      "frame": 439
+    },
+    {
+      "slug": "ep15-teste-sonnet",
+      "scene": "treino",
+      "frame": 502
+    },
+    {
+      "slug": "ep15-teste-sonnet",
+      "scene": "certo",
+      "frame": 565
+    },
+    {
+      "slug": "ep15-teste-sonnet",
+      "scene": "chave",
+      "frame": 614
+    },
+    {
+      "slug": "ep15-teste-sonnet",
+      "scene": "habito",
+      "frame": 733
+    },
+    {
+      "slug": "ep15-teste-sonnet",
+      "scene": "fim",
+      "frame": 858
+    }
+  ]
+}
