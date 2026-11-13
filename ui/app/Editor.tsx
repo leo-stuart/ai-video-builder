@@ -231,7 +231,9 @@ export const Editor: React.FC<{ slug: string; onBack: () => void }> = ({ slug, o
 
         <section className="col stage">
           <div className={`phone${playing ? "" : " paused"}`} onClick={toggle}>
-            <Player ref={player} component={EpisodeComposition as any} inputProps={props as any} durationInFrames={total} compositionWidth={W} compositionHeight={H} fps={FPS} style={{ width: "100%", height: "100%" }} acknowledgeRemotionLicense />
+            <div className="screen">
+              <Player ref={player} component={EpisodeComposition as any} inputProps={props as any} durationInFrames={total} compositionWidth={W} compositionHeight={H} fps={FPS} style={{ width: "100%", height: "100%" }} acknowledgeRemotionLicense />
+            </div>
             <div className="cover"><b>▶</b></div>
           </div>
           <div className="tl">

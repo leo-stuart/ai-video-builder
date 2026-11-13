@@ -131,10 +131,12 @@ h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -.025em; }
 
 /* palco */
 .stage { align-items: center; padding: 6px 8px 4px; gap: 16px; overflow: visible; }
-/* moldura de titânio usinado: aro claro, chanfro escuro, vidro por dentro */
-.phone { position: relative; flex: 1; min-height: 0; aspect-ratio: 9/16; max-width: 100%; border-radius: 34px; padding: 5px; background: linear-gradient(145deg, #f2f4f7 0%, #8a919c 18%, #2b2e34 42%, #15171a 58%, #7c838e 82%, #e4e8ed 100%); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .35), 0 0 0 1px #000, 0 40px 90px -30px #000, 0 0 90px -20px rgba(150, 195, 240, .35); cursor: pointer; }
-.phone > div:first-child { border-radius: 29px; overflow: hidden; clip-path: inset(0 round 29px); background: #000; }
-.phone::after { content: ""; position: absolute; inset: 5px; border-radius: 29px; pointer-events: none; background: linear-gradient(120deg, rgba(255, 255, 255, .13) 0%, transparent 22%); }
+/* Moldura de titânio usinado. A tela tem exatamente 9:16 e o aro fica por fora, para o vídeo encaixar sem sobra. */
+.phone { position: relative; z-index: 0; flex: 1; min-height: 0; aspect-ratio: 9/16; max-width: calc(100% - 12px); margin: 6px; border-radius: 28px; cursor: pointer; }
+.phone::before { content: ""; position: absolute; inset: -6px; z-index: -1; border-radius: 34px; background: linear-gradient(145deg, #f2f4f7 0%, #8a919c 18%, #2b2e34 42%, #15171a 58%, #7c838e 82%, #e4e8ed 100%); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .35), 0 0 0 1px #000, 0 40px 90px -30px #000, 0 0 90px -20px rgba(150, 195, 240, .35); }
+/* O Player põe as faixas de áudio como primeiros filhos; por isso a tela tem um invólucro próprio. */
+.screen { position: absolute; inset: 0; border-radius: 28px; overflow: hidden; clip-path: inset(0 round 28px); background: #000; box-shadow: 0 0 0 1.5px #000; }
+.phone::after { content: ""; position: absolute; inset: 0; border-radius: 28px; pointer-events: none; background: linear-gradient(120deg, rgba(255, 255, 255, .13) 0%, transparent 22%); }
 .phone .cover { position: absolute; inset: 0; display: grid; place-items: center; opacity: 0; transition: opacity .15s; pointer-events: none; z-index: 2; }
 .phone.paused:hover .cover { opacity: 1; }
 .cover b { width: 72px; height: 72px; border-radius: 50%; display: grid; place-items: center; font-size: 24px; padding-left: 5px; color: #fff; background: rgba(255, 255, 255, .16); border: 1px solid rgba(255, 255, 255, .45); backdrop-filter: blur(18px) saturate(180%); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .5), 0 12px 34px rgba(0, 0, 0, .5); }
