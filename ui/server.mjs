@@ -3,7 +3,7 @@
 // Só escuta em 127.0.0.1. Nunca publica nada nem envia arquivo para fora.
 //   node ui/server.mjs [--port 4173] [--workspace <pasta>]   (ou VB_WORKSPACE)
 import { createServer } from "node:http";
-import { createReadStream, existsSync, readdirSync, realpathSync, statSync } from "node:fs";
+import { createReadStream, existsSync, mkdirSync, readdirSync, realpathSync, statSync, watch } from "node:fs";
 import { randomUUID } from "node:crypto";
 import { basename, dirname, extname, join, sep } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -113,6 +113,40 @@ const P = {
 };
 // Mesma regra de preparePublic: o motor vence o espaço de trabalho em nomes repetidos.
 const publicTop = () => new Set([P.enginePublic, P.public].flatMap((d) => (existsSync(d) ? readdirSync(d).filter((n) => !n.startsWith(".")) : [])));
+
+/* ───────────── ao vivo: avisa a UI quando um vídeo muda por fora (agente, CLI, MCP) ───────────── */
+const live = new Set();
+const broadcast = (data) => {
+  for (const res of live) if (!res.writableEnded && !res.destroyed) res.write(`data: ${JSON.stringify(data)}\n\n`);
+};
+{
+  const dir = join(WS, "episodes");
+  mkdirSync(dir, { recursive: true });
+  const timers = new Map();
+  // Junta rajadas de gravação (episode.json + script.json + timing.json) num aviso só por vídeo.
+  const later = (key, data) => {
+    clearTimeout(timers.get(key));
+    timers.set(key, setTimeout(() => (timers.delete(key), broadcast(data)), 250));
+  };
+  try {
+    watch(dir, { recursive: true }, (_e, file) => {
+      if (!file) return later("list", { type: "list" });
+      const [slug, name] = String(file).split(sep);
+      if (!slug || slug.startsWith(".")) return;
+      if (!name) return later("list", { type: "list" });
+      if (/^(episode|script|timing)\.json$/.test(name)) {
+        later(`ep:${slug}`, { type: "episode", slug });
+        later("list", { type: "list" });
+      }
+    });
+  } catch (e) {
+    console.error(`aviso: sem atualização ao vivo (${e.message})`);
+  }
+  // Mantém as conexões abertas atrás de proxies e detecta abas fechadas.
+  setInterval(() => {
+    for (const res of live) if (!res.writableEnded && !res.destroyed) res.write(": ping\n\n");
+  }, 25000).unref();
+}
 
 /* ───────────── tarefas longas ───────────── */
 const jobs = new Map();
@@ -239,6 +273,14 @@ const api = async (req, res, url) => {
   if (a === "jobs" && b && m === "GET") {
     const j = jobs.get(b);
     return j ? send(res, 200, publicJob(j)) : send(res, 404, { code: "no-job", message: "tarefa não encontrada (o servidor foi reiniciado?)." });
+  }
+
+  if (a === "events" && m === "GET") {
+    res.writeHead(200, { "content-type": "text/event-stream; charset=utf-8", "cache-control": "no-store", connection: "keep-alive", "x-accel-buffering": "no" });
+    res.write(": ok\n\n");
+    live.add(res);
+    req.on("close", () => live.delete(res));
+    return;
   }
 
   if (a === "episodes") {

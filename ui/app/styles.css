@@ -263,3 +263,6 @@ textarea.in { resize: vertical; min-height: 88px; font-size: 14.5px; line-height
 .chat-in { display: flex; gap: 8px; align-items: flex-end; padding: 10px 14px 14px; border-top: 1px solid var(--hair); }
 .chat-in textarea.in { min-height: 0; height: 58px; resize: none; font-size: 13.5px; flex: 1; }
 .chat-in .btn { height: 38px; }
+
+/* aviso de mudança feita por fora */
+.pill.live { animation: fade .2s; box-shadow: 0 0 18px -4px var(--ice); }

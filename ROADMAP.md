@@ -56,7 +56,7 @@ Marque cada entregável ao concluir (`- [x]`). Uma fase só fecha quando o crit�
 - [ ] Validador de enquadramento: acusa boneco cortado e cartão sobre rosto antes do render
 - [ ] Câmera e enquadramento por cena editáveis na UI
 - [ ] Seletor de marca na UI e layout para telas abaixo de 1180 px
-- [ ] A UI recarrega sozinha quando um agente altera o vídeo por fora
+- [x] A UI recarrega sozinha quando um agente altera o vídeo por fora
 - [ ] Segunda marca real de ponta a ponta (o próprio produto), com 5 vídeos publicados
 
 **Saída:** uma pessoa sem código cadastra a marca e publica um vídeo em menos de 30 minutos.

@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { api } from "./api";
+import { useLive } from "./useLive";
 import { Editor } from "./Editor";
 import { Bold, Dialog, PRODUCT, STATUS, colorOf } from "./lib";
 
@@ -37,6 +38,7 @@ const Home: React.FC = () => {
       .catch((e) => setErr(e.message));
   }, []);
   useEffect(load, [load]);
+  useLive((e) => e.type === "list" && load());
   useEffect(() => {
     document.title = ws ? `${ws.brand.name} · ${PRODUCT}` : PRODUCT;
   }, [ws]);

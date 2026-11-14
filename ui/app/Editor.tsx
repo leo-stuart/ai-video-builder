@@ -5,6 +5,7 @@ import { FPS, H, W, sceneFrames } from "../../src/kit";
 import { api, type Job } from "./api";
 import { Dialog, Rich, STATUS, fmtT, plain, who } from "./lib";
 import { useJob } from "./useJob";
+import { useLive } from "./useLive";
 import { Chat } from "./Chat";
 
 type Issue = { scene?: string; message: string };
@@ -58,6 +59,17 @@ export const Editor: React.FC<{ slug: string; onBack: () => void }> = ({ slug, o
   });
   const running = job?.status === "running";
 
+  // Mudança feita por fora (Claude Code pelo MCP, CLI): recarrega e avisa por um instante.
+  const [external, setExternal] = useState(false);
+  const extTimer = useRef<ReturnType<typeof setTimeout>>();
+  useEffect(() => () => clearTimeout(extTimer.current), []);
+  useLive((ev) => {
+    if (ev.type !== "episode" || ev.slug !== slug) return;
+    load();
+    setExternal(true);
+    clearTimeout(extTimer.current);
+    extTimer.current = setTimeout(() => setExternal(false), 2600);
+  });
   useEffect(() => {
     load().then((e) => e?.job && attach(e.job));
   }, [load]);
@@ -184,6 +196,7 @@ export const Editor: React.FC<{ slug: string; onBack: () => void }> = ({ slug, o
         <span className="pill" style={{ ["--c" as any]: st.c }}>{st.label}</span>
         <span className="tag">{ep.spec.format}</span>
         <span className="tag">{ep.spec.freedom}</span>
+        {external && <span className="pill live" style={{ ["--c" as any]: "var(--ice)" }}><span className="dot" style={{ ["--c" as any]: "var(--ice)" }} />atualizado</span>}
 
         <nav className="rail">
           <button className={`step ${scriptErrors.length ? "bad" : "done"}${nextStep === "roteiro" ? " next" : ""}`} onClick={() => setTab("problemas")}>
@@ -353,7 +366,20 @@ const SceneForm: React.FC<{ slug: string; beat: any; onSaved: () => void; onDirt
   const [f, setF] = useState(init);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
-  useEffect(() => setF(init), [init]);
+  const baseline = useRef(init);
+  useEffect(() => {
+    const previous = baseline.current;
+    baseline.current = init;
+    // Atualiza os campos intactos; mantém só o que foi digitado localmente.
+    setF((draft) => ({
+      narration: draft.narration === previous.narration ? init.narration : draft.narration,
+      sub: draft.sub === previous.sub ? init.sub : draft.sub,
+      hold: draft.hold === previous.hold ? init.hold : draft.hold,
+      params: Object.fromEntries([...new Set([...Object.keys(init.params), ...Object.keys(draft.params)])]
+        .filter((k) => k in init.params || draft.params[k] !== previous.params[k])
+        .map((k) => [k, draft.params[k] === previous.params[k] ? init.params[k] : draft.params[k]])),
+    }));
+  }, [init]);
 
   const fields = useMemo(() => {
     const o: Record<string, any> = {};
