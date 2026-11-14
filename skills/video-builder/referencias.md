@@ -1,6 +1,8 @@
 # De onde veio o formato
 
-Referências vistas em novembro de 2026. Servem para entender o formato; não copie roteiro, personagem nem arte. Você não precisa ler isto para produzir um episódio.
+Links recuperados do pedido original do usuário ao Claude. As descrições das seções 1–4 são **notas herdadas daquela sessão**, não uma nova revisão dos vídeos. Em 13/11/2026, acesso público pelos links, download e navegador não disponibilizaram o vídeo para uma nova decupagem. Durações e frequências de corte abaixo não foram remedidas; não as tratar como especificação técnica. Servem como hipóteses de direção até haver mídia acessível. Não copie roteiro, personagem nem arte. Leia junto com [direcao.md](direcao.md).
+
+Uma nova análise precisa guardar trecho/timecode, ação observada e evidência. Sem assistir, não atribuir ao autor uma regra de câmera ou um número de cortes. Diagnóstico local e propostas estão em `docs/VIDEO-DIRECTION-AUDIT.md`.
 
 ## 1. Explicativo em 3D de brinquedo (instagram.com/reel/DfqVuaIuIt0, @madrazzo3d)
 

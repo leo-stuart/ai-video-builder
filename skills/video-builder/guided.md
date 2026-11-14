@@ -21,6 +21,7 @@ node scripts/vid.mjs --workspace <pasta> scene <slug> scene <id> --json '{…cen
 * **Cena nova só em dados:** insira uma cena do tipo `scene-data` e preencha com `scene --json`:
   `vid scene <slug> insert <id-anterior> --id dica --type scene-data --narration "…"` e depois `vid scene <slug> scene dica --json @dica.json`.
 * A última cena é sempre `end-card` e não pode ser removida.
+* Antes de escolher câmeras, leia [direcao.md](direcao.md). Para um plano estável, `shot` e `to` devem ser iguais; omitir `to` aplica movimento automático. Quiz/gabarito conservam plano e posições durante leitura/revelação.
 * Mudou a sequência de cenas? Releia o episódio como um todo: tem que continuar contando uma história (lugar → problema → treino → acerto → marca).
 
 ## Misturar formatos

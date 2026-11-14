@@ -21,6 +21,8 @@ O nível sai do bloco `models` de `workspace.json` (com `freedom: auto`, mapeia 
 
 Leia o guia do seu nível antes de começar. Na dúvida, fique em `recipe`.
 
+Leia também [direcao.md](direcao.md) antes de criar ou variar episódios. Escolher formato e sortear mundo não substitui planejar ação, câmera e ritmo. Registre um plano visual em `episodes/<slug>/direction.md`; compare com uma referência interna aprovada. Hoje o ep17 do Pragma é aprovado; ep18 e os dois primeiros da ClippAI foram reprovados pelo usuário. Para formato novo, valide um piloto em movimento antes de expandir o lote.
+
 ## 2. O fluxo (igual nos três níveis)
 
 ```bash
@@ -40,7 +42,7 @@ node scripts/vid.mjs --workspace <pasta> pack ep14-tema                         
 * **Pare antes da voz.** No passo 3, mostre ao usuário a lista de falas e a legenda do post. Só gere voz depois do sim. Uma autorização explícita do usuário para gastar voz neste episódio, ou no lote, vale como o sim; sem ela, pergunte. Se ninguém puder responder e não houve autorização, **não gere voz**: entregue só o roteiro e diga que a voz aguarda aprovação.
 * **Saldo da voz:** `vid voices` (mostra o saldo) antes e depois do `voice`; a diferença é o gasto do episódio (da ordem de 300 a 900 créditos; falas iguais de outro episódio não gastam, ficam em cache). Diga o gasto na entrega.
 * **Corrigir sem refazer tudo:** `vid scene <slug> set <id> narration="…" params.x=…` e `vid render` de novo: só as cenas mudadas são renderizadas.
-* **Revisão:** siga `revisao.md` nas folhas do passo 6. Não renderize sem olhar.
+* **Revisão:** siga `revisao.md` nas folhas do passo 6 antes do render de revisão. Depois reproduza o vídeo e gere os trechos de câmera com `node scripts/review-motion.mjs --workspace <pasta> <slug>`. Só empacote como final após revisar o movimento; folhas estáticas e validação sem erros não bastam. Sem reprodução verificada, entregue como prévia pendente, explicando o limite.
 
 ## 3. Lote ("faça 5 vídeos hoje")
 
@@ -50,7 +52,7 @@ node scripts/vid.mjs --workspace <pasta> new ep14-a --pauta … --model <você> 
 node scripts/vid.mjs --workspace <pasta> batch ep14-a ep15-b ep16-c  # voz + validação + render + pacote, retomável
 ```
 
-Mostre ao usuário todas as falas antes do `batch` (gasta voz). O `batch` para no primeiro problema de cada episódio e diz qual; corrija e rode de novo: ele retoma de onde parou. Ao fim, `out/calendar.csv` tem a ordem e o horário sugerido de cada vídeo, e `out/<slug>/` tem `video.mp4`, `reels.txt`, `tiktok.txt`, `shorts.txt`, `thumb.jpg` e `meta.json`.
+Mostre ao usuário todas as falas antes do `batch` (gasta voz); uma autorização explícita já dada para o lote continua valendo. O `batch` para no primeiro problema de cada episódio e retoma de onde parou. **Ele ainda não faz revisão visual nem temporal:** seus pacotes e calendário são candidatos, não aprovação de qualidade. Para formato novo ou reprovado, prefira voz → folhas → render de revisão → reprodução → correção → pacote, um piloto primeiro. Não ampliar um lote só porque o processo terminou sem erro.
 
 ## 4. Regras que não se quebram
 
@@ -69,7 +71,7 @@ O `voice` usa o ElevenLabs quando existe `ELEVENLABS_API_KEY` em `.env.local`. A
 
 * Sem chave: peça ao usuário para criar `<pasta>/.env.local` com `ELEVENLABS_API_KEY=...`. Não peça a chave no chat. Enquanto isso, `vid voice <slug> --provider none` gera tempos estimados para você revisar as cenas; antes do render final rode a voz de verdade.
 * Gravação humana em `voice/<slug>/<id>.m4a` (um arquivo por cena) tem prioridade sobre a voz sintética.
-* O plano grátis do ElevenLabs não cobre uso comercial: avise o usuário na entrega.
+* O plano grátis do ElevenLabs não cobre uso comercial: confira antes da geração e avise. Um vídeo de divulgação gerado nesse plano é prévia de revisão; para publicar comercialmente é preciso nova voz gerada sob licença comercial, sem reutilizar o áudio sem licença do cache. Não chamar o pacote de "pronto para postar" enquanto isso estiver pendente.
 
 ## 6. Quando algo dá errado
 
@@ -89,5 +91,6 @@ O `voice` usa o ElevenLabs quando existe `ELEVENLABS_API_KEY` em `.env.local`. A
 * `recipe.md`, `guided.md`, `free.md`: um guia por nível.
 * `formats.md` e `beats.md`: gerados por `vid docs`; listam formatos, campos da ficha e tipos de cena.
 * `revisao.md`: lista de revisão das folhas e tabela de consertos.
+* `direcao.md`: plano visual, câmera estável no quiz, ritmo por ação e adaptação das referências.
 * `catalogo-1.jpg`, `catalogo-2.jpg`, `catalogo-3.jpg`: foto de cada cenário e de cada câmera, com o nome (úteis em `guided` e `free`).
 * `referencias.md`: de onde veio o formato. Leia só se o usuário pedir algo diferente.

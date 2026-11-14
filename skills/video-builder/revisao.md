@@ -1,6 +1,6 @@
 # Revisão
 
-`node scripts/vid.mjs --workspace <pasta> sheet <slug>` gera folhas em `.qa/<slug>-sheet-N.jpg`: até 12 quadros por folha, dois por cena (um no começo, um perto do fim), cada um com o id da cena e o segundo no canto. **Abra todas as folhas com a ferramenta de ler imagem e olhe.** Você não vê o vídeo de outro jeito.
+`node scripts/vid.mjs --workspace <pasta> sheet <slug>` gera folhas em `.qa/<slug>-sheet-N.jpg`: até 12 quadros por folha, dois por cena (um no começo, um perto do fim), cada um com o id da cena e o segundo no canto. **Abra todas as folhas com a ferramenta de ler imagem e olhe.** Elas conferem composição e texto; não demonstram movimento suave ou ritmo bom.
 
 Para olhar uma cena de perto: `vid sheet <slug> --scene <id>` (seis quadros, maiores). Use sempre que consertar uma cena, em vez de refazer a folha inteira.
 
@@ -13,7 +13,7 @@ Para cada par de quadros, responda sim ou não:
 1. **O cenário é o da cena?** Nenhum quadro vermelho, preto ou vazio.
 2. **Quem fala está no quadro, de ombro a ombro, com a boca aberta?** Em fala de personagem, o rosto dele é o centro da imagem.
 3. **O humor bate com a fala?** Susto no branco, cara fechada na bronca, sorriso no acerto.
-4. **Os dois quadros da cena são diferentes entre si?** Outro plano, outra pose ou um objeto novo. Iguais = a cena está parada.
+4. **A ação prevista está visível?** Compare com `direction.md`. Dois quadros diferentes não provam ritmo; dois iguais podem ser uma pausa de leitura intencional. Não adicionar zoom só para passar nesta lista.
 5. **O texto na tela é o deste episódio?** Nada sobrou de outro episódio ("6 anos", "0 cafés", "To go, please.").
 6. **Todo inglês na tela está certo?** Letra por letra: apóstrofo, vírgula, ponto.
 7. **A legenda está legível?** Não coberta por cartão, não em cima de outro texto.
@@ -24,10 +24,10 @@ Para cada par de quadros, responda sim ou não:
 No conjunto:
 
 11. **A história se entende só pelas imagens?**
-12. **Duas cenas vizinhas no mesmo cenário têm planos diferentes.**
+12. **As cenas vizinhas conservam continuidade ou cortam por um motivo claro.** Quiz → gabarito deve manter o enquadramento; diálogo pode cortar para quem responde.
 13. **Este episódio parece diferente do anterior?** O `vid new` imprimiu o mundo sorteado (lugar, câmera, metáfora) e o `check` já barra repetição. Só confira se nada saiu estranho.
 
-Qualquer "não": conserte, refaça a cena com `--scene`, olhe de novo. Só renderize com tudo "sim".
+Qualquer "não": conserte, refaça a cena com `--scene`, olhe de novo. Só faça o render de revisão após conferir essas imagens. Isso ainda não aprova a entrega final.
 
 **No nível `recipe`**, nem tudo tem conserto ao seu alcance. Decida assim:
 * Problema de **texto** (longo, de outro episódio, com marcação errada): conserte com `set`.
@@ -43,7 +43,8 @@ Qualquer "não": conserte, refaça a cena com `--scene`, olhe de novo. Só rende
 | Texto de outro episódio na tela | Parâmetro não trocado | `vid scene <slug> set <id> params.<campo>="…"` (recipe) |
 | Palavra de animação errada (animação dispara tarde ou cedo) | `cueWord` aponta para outra palavra | `set <id> params.cueWord=palavra` (recipe) |
 | Fala com sinal estranho na legenda | Marcação `*` ou `[en]` sem par | Corrija a narração e rode `vid voice` (recipe) |
-| Cena parada (dois quadros iguais) | Falta ação ou plano | Troque o tipo (`replace`) ou escreva a cena em dados com dois planos (guided) |
+| Plano longo sem progressão | Não há mudança narrativa | Introduza ação/transformação relevante ou reduza a fala; não resolver só com travelling (guided) |
+| Câmera reinicia/deriva sob opções | Estilo global aplicado em cenas independentes | Use `shot` e `to` iguais; mantenha o mesmo plano no quiz/gabarito e revise a fronteira (guided) |
 | Episódio igual ao anterior | Mundo repetido | `vid scene <slug> world place=<outro>` ou outra pauta (guided) |
 | Boneco cortado na lateral | Plano fechado demais | Cena em dados com um plano mais aberto (guided); código: planos de `SHOT` (free) |
 | Carimbo (`stamp`) estourando a lateral | Texto longo ou lugar com letreiro grande | `set <id> params.stamp="Curto"` (recipe) |
@@ -52,16 +53,28 @@ Qualquer "não": conserte, refaça a cena com `--scene`, olhe de novo. Só rende
 
 ## Depois do render
 
+Gere evidência temporal e abra o player:
+
+```bash
+node scripts/review-motion.mjs --workspace <pasta> <slug>
+```
+
+Saída: `.qa/<slug>-motion/index.html`, trechos MP4 a 30 fps com 0,45 s das cenas vizinhas, tiras temporais e `manifest.json`. Não chama voz nem altera o episódio. As tiras ajudam a localizar defeitos, mas não substituem reprodução a 1×. Reproduza o vídeo completo e os trechos problemáticos; use 0,5× só para investigar o que pareceu errado a 1×.
+
+Registre em `episodes/<slug>/motion-review.md`: arquivo/revisão, trecho assistido, método de reprodução, defeito observado, correção e resultado do reteste. Sem esse registro, o render permanece prévia. Não preencher "aprovado" só porque foi gerado um HTML ou extraído um conjunto de quadros.
+
+Confira em particular: deriva da câmera atrás de cartões fixos; reinício de zoom entre cenas semelhantes; opções/gabarito que saltam; rosto saindo do quadro no trajeto; ação sem relação com a fala; longos blocos com o mesmo boneco e cartões. Rever as fronteiras, não só o meio da cena. Na ClippAI, conferir se existe transformação visual de problema em resultado, além do texto.
+
 ```bash
 ffprobe -v error -show_entries stream=codec_name,width,height,duration -of csv=p=0 out/<slug>.mp4
 ```
 
-Tem que mostrar `h264,1080,1920,…` e `aac,…`, com a duração do formato (de 25 a 50 segundos). Sem a linha `aac`, o vídeo saiu mudo: rode a voz e renderize de novo.
+Tem que mostrar `h264,1080,1920,…` e `aac,…`, com a duração alvo do formato escolhido. A presença de AAC não garante narração: confira que `timing.provider` não é `none` e que as cenas faladas têm áudio. `none` pode produzir AAC apenas com efeitos; não chamar isso de voz pronta.
 
 ## O que você não consegue verificar (diga ao usuário)
 
 * **O som.** Você não ouve. Pronúncia, sotaque e volume ficam para o usuário.
-* **O movimento.** As folhas são quadros parados; um corte brusco demais ou uma animação estranha só aparece assistindo.
+* **O movimento, caso não tenha havido reprodução.** Nesse caso registre a revisão como pendente. Folhas, codec correto e ausência de quadros pretos não substituem assistir.
 * **A sincronia fina** entre boca, legenda e voz.
 * **O inglês fora das pautas prontas.**
 
